@@ -1,0 +1,125 @@
+/* ---------- Base ---------- */
+
+:root {
+  --bg: #000;
+  --text: #f6f6f6;
+  --muted: #c9c9cf;
+  --surface: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.14);
+  --shadow: 0 40px 120px rgba(0,0,0,0.45);
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+
+/* Smooth scroll + document snap */
+html { scroll-behavior: smooth; }
+body { overflow-x: hidden; scroll-snap-type: y mandatory; }
+
+/* ---------- Layout shells ---------- */
+.home { min-height: 100%; display: flex; flex-direction: column; }
+
+/* Mast */
+.mast { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.mast-inner { max-width: 1200px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo { width: 32px; height: 32px; border-radius: 10px; background: #fff; color: #000; display: grid; place-items: center; font-weight: 900; }
+.brand-name { font-weight: 900; letter-spacing: -0.02em; }
+.nav { display: flex; align-items: center; gap: 8px; }
+.nav-link { padding: 8px 12px; border-radius: 10px; }
+.nav-link:hover { background: rgba(255,255,255,0.06); }
+
+/* Buttons */
+.btn { padding: 10px 14px; border-radius: 12px; font-weight: 700; border: 1px solid transparent; cursor: pointer; transition: 0.2s ease; }
+.btn.solid { background: #fff; color: #000; }
+.btn.solid:hover { opacity: 0.9; }
+.btn.outline { border-color: var(--border); background: transparent; }
+.btn.outline:hover { background: rgba(255,255,255,0.08); }
+
+/* ---------- HERO ---------- */
+.hero { position: relative; display: grid; place-items: center; padding: 60px 16px 24px; min-height: 88vh; overflow: hidden; }
+.hero-glow { position: absolute; border-radius: 9999px; filter: blur(64px); opacity: 0.35; pointer-events: none; }
+.hero-glow-a { top: -160px; left: -160px; width: 50vh; height: 50vh; background: rgba(255,0,200,0.22); }
+.hero-glow-b { bottom: -160px; right: -160px; width: 50vh; height: 50vh; background: rgba(0,200,255,0.20); }
+
+.hero-center { position: relative; display: grid; place-items: center; }
+.hero-title { font-size: clamp(52px, 9vw, 96px); font-weight: 900; letter-spacing: -0.02em; margin: 0; text-align: center; }
+
+/* Orbit */
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes floatPulse { 0%{ transform: translateY(0)} 50%{ transform: translateY(-6px)} 100%{ transform: translateY(0)} }
+
+.orbit { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.orbit-ring { position: relative; width: clamp(240px, 40vw, 360px); height: clamp(240px, 40vw, 360px); animation: spinSlow 28s linear infinite; }
+.orbit-pos { position: absolute; left: 50%; top: 50%; transform-origin: 0 0; }
+.orbit-icon {
+  position: absolute;
+  left: 0; top: 0;
+  transform-origin: clamp(120px, 20vw, 180px) 0;
+  translate: clamp(120px, 20vw, 180px) 0;
+  font-size: clamp(22px, 3.6vw, 30px);
+  animation: floatPulse 4s ease-in-out infinite;
+}
+
+/* Sub */
+.hero-sub { margin-top: 28px; text-align: center; max-width: 760px; padding: 0 16px; }
+.hero-lead { color: var(--muted); margin: 0; }
+.hero-cta { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Social proof ---------- */
+.trust { max-width: 1200px; margin: 0 auto; padding: 16px; }
+.trust-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.trust-text { color: #b3b3bb; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
+
+/* ---------- Snap screens ---------- */
+.snap-container { /* we use document scroll; container here for semantics only */ }
+.snap-screen { height: 100vh; scroll-snap-align: start; display: grid; place-items: center; padding: 16px; }
+.screen-card {
+  position: relative;
+  width: min(1100px, 92vw);
+  border-radius: 26px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 4vw, 48px);
+  text-align: center;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s ease;
+  opacity: .9;
+  transform: scale(.98);
+}
+.snap-screen:target .screen-card,
+.snap-screen:hover .screen-card { opacity: 1; transform: scale(1); }
+
+.screen-title { font-size: clamp(30px, 5vw, 54px); margin: 0 0 8px; font-weight: 900; letter-spacing: -0.02em; }
+.screen-emoji { display: block; font-size: clamp(38px, 6vw, 64px); margin-top: 6px; }
+.screen-body { color: var(--muted); margin: 10px auto 16px; max-width: 62ch; }
+.screen-tags { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.tag { padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid var(--border); font-weight: 700; font-size: 14px; }
+
+.edge-fade {
+  position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background:
+    radial-gradient(900px 600px at 10% -10%, rgba(255,255,255,.06), transparent),
+    radial-gradient(900px 600px at 90% 110%, rgba(255,255,255,.06), transparent),
+    linear-gradient(180deg, rgba(0,0,0,.22), transparent 18%, transparent 82%, rgba(0,0,0,.22));
+  mix-blend-mode: soft-light;
+}
+
+/* ---------- Footer ---------- */
+.foot { padding: 40px 16px 56px; }
+.foot-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; color: #b3b3bb; font-size: 14px; }
+.foot-links { display: flex; gap: 16px; }
+.foot a:hover { color: #fff; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .nav { gap: 6px; }
+  .btn { padding: 9px 12px; }
+  .chip { padding: 7px 10px; }
+}

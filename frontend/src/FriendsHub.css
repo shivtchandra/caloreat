@@ -1,0 +1,84 @@
+/* ===== FriendsHub polish ===== */
+:root{
+    --fh-bg1:#fff7da;         /* warm cream */
+    --fh-bg2:#fdebd2;         /* peach */
+    --fh-card:#f7f2efcc;      /* glass card */
+    --fh-border:#e9e4df;
+    --fh-text:#0f172a;        /* slate-900 */
+    --fh-muted:#6b7280;       /* slate-500 */
+    --fh-ring:#10b981;        /* emerald */
+    --fh-ring-idle:#a5b4fc;   /* indigo-300 */
+    --fh-shadow:0 20px 60px rgba(0,0,0,.10);
+  }
+  
+  .fh-shell{
+    position:relative;
+    max-width:1152px;
+    margin:0 auto;
+    padding:18px;
+  }
+  
+  .fh-gradient{
+    position:fixed;
+    inset:-10vh -10vw -10vh -10vw;
+    background: radial-gradient(1200px 800px at 10% -5%, var(--fh-bg2), transparent),
+                radial-gradient(1200px 800px at 90% 110%, var(--fh-bg2), transparent),
+                linear-gradient(180deg, var(--fh-bg1), #fff);
+    z-index:-2;
+  }
+  
+  .fh-stickers{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    opacity:.75;
+    filter: drop-shadow(0 12px 20px rgba(0,0,0,.08));
+  }
+  
+  /* Cards */
+  .fh-card{
+    background:var(--fh-card);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--fh-border);
+    border-radius:16px;
+    box-shadow:var(--fh-shadow);
+  }
+  
+  .fh-section{ padding:16px; border-radius:16px; }
+  .fh-title{ margin:0; font-weight:800; letter-spacing:.2px; }
+  .fh-subtle{ color:var(--fh-muted); }
+  
+  /* Stories bar */
+  .fh-stories{ padding:12px; border-radius:16px; overflow-x:auto; }
+  .fh-story{
+    appearance:none; border:none; background:transparent; cursor:pointer; padding:0; text-align:center;
+  }
+  .fh-ring{ width:66px; height:66px; border-radius:999px; padding:3px; box-shadow:0 8px 20px rgba(0,0,0,.08); }
+  .fh-ring.active{ background:conic-gradient(var(--fh-ring), #34d399, var(--fh-ring)); }
+  .fh-ring.idle{ background:conic-gradient(#c7d2fe, var(--fh-ring-idle), #c7d2fe); }
+  .fh-avatar{ width:100%; height:100%; border-radius:999px; background:white; display:grid; place-items:center; font-weight:800; }
+  
+  /* Inputs & buttons */
+  .fh-input{
+    width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--fh-border);
+    background:#fff; outline:none;
+  }
+  .fh-btn{ padding:10px 14px; border-radius:12px; border:none; font-weight:700; cursor:pointer; }
+  .fh-btn-primary{ background:#111; color:#fff; box-shadow:0 6px 18px rgba(0,0,0,.15); }
+  .fh-pill{ background:#effaf2; color:#0f6a1a; padding:4px 8px; border-radius:999px; font-weight:700; font-size:12px; }
+  
+  /* Right column areas */
+  .fh-chat, .fh-feed { border-radius:16px; }
+  .fh-chat-list{ height:300px; overflow:auto; padding:12px; }
+  .fh-bubble{ display:inline-block; background:#f3f4f6; border-radius:14px; padding:6px 10px; }
+  .fh-bubble.me{ background:#111; color:#fff; }
+  
+  /* Grid responsive */
+  @media (min-width: 980px){
+    .fh-grid{ display:grid; grid-template-columns:1.1fr 1.6fr; gap:16px; }
+  }
+  @media (max-width: 979px){
+    .fh-grid{ display:grid; gap:16px; }
+  }
+  

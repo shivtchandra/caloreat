@@ -1,0 +1,45 @@
+{
+  "name": "food-analysis-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "date-fns": "^4.1.0",
+    "dompurify": "^3.3.0",
+    "firebase": "^12.5.0",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.544.0",
+    "marked": "^17.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-loader-spinner": "^8.0.0",
+    "react-router-dom": "^6.30.1",
+    "react-scripts": "5.0.1",
+    "recharts": "^3.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:css": "tailwindcss -i ./src/index.css -o ./src/tailwind.output.css --minify",
+    "postinstall": "echo 'postinstall hook - tailwind binary should be available'"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "http-proxy-middleware": "^3.0.5",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.1"
+  }
+}

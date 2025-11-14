@@ -1,0 +1,116 @@
+{"ts": 1759654891.949327, "reason": "noise_pattern", "text": "Q Search by restaurant or dish a"}
+{"ts": 1759654891.949753, "reason": "noise_pattern", "text": "Order placed on 02 Oct, 7:34PM"}
+{"ts": 1759654891.949802, "reason": "alpha_ratio_low", "text": "7265.70 -", "extra": {"text_no_price": "-"}}
+{"ts": 1759654891.949831, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759654891.949877, "reason": "low_confidence", "text": "y", "extra": {"max_conf": 1}}
+{"ts": 1759654891.94993, "reason": "noise_pattern", "text": "Order placed on 28 Sep, 6:57PM"}
+{"ts": 1759654891.949955, "reason": "price_only", "text": "7162.00", "extra": {"text_no_price": ""}}
+{"ts": 1759654891.949978, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655028.389877, "reason": "noise_pattern", "text": "Q Search by restaurant or dish a"}
+{"ts": 1759655028.390479, "reason": "noise_pattern", "text": "Order placed on 02 Oct, 7:34PM"}
+{"ts": 1759655028.390532, "reason": "alpha_ratio_low", "text": "7265.70 -", "extra": {"text_no_price": "-"}}
+{"ts": 1759655028.390563, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655028.390613, "reason": "low_confidence", "text": "y", "extra": {"max_conf": 1}}
+{"ts": 1759655028.390668, "reason": "noise_pattern", "text": "Order placed on 28 Sep, 6:57PM"}
+{"ts": 1759655028.390696, "reason": "price_only", "text": "7162.00", "extra": {"text_no_price": ""}}
+{"ts": 1759655028.3907259, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655044.064687, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759655044.064975, "reason": "noise_pattern", "text": "Q Search by restaurant or dish g"}
+{"ts": 1759655044.065054, "reason": "noise_pattern", "text": "Order placed on 10 Jul, 9:21PM"}
+{"ts": 1759655044.0650811, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655044.065151, "reason": "noise_pattern", "text": "Order placed on 06 Jul, 1:57PM"}
+{"ts": 1759655044.065174, "reason": "noise_pattern", "text": "Delivered 420.25"}
+{"ts": 1759655044.0652218, "reason": "noise_pattern", "text": "@ 1x Boneless Special Mutton Biryani"}
+{"ts": 1759655044.065258, "reason": "noise_pattern", "text": "Order placed on 29 Jun, 1.13°M"}
+{"ts": 1759655044.0652769, "reason": "noise_pattern", "text": "Delivered 7410.00"}
+{"ts": 1759655044.0653172, "reason": "noise_pattern", "text": "@ 1x Boneless Special Chicken Biryani"}
+{"ts": 1759655044.065353, "reason": "noise_pattern", "text": "Order placed on 05 Jun, 12:51PM"}
+{"ts": 1759655044.065377, "reason": "noise_pattern", "text": "Delivered 245.00"}
+{"ts": 1759655554.084521, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759655554.084779, "reason": "noise_pattern", "text": "Q Search by restaurant or dish g"}
+{"ts": 1759655554.084856, "reason": "noise_pattern", "text": "Order placed on 10 Jul, 9:21PM"}
+{"ts": 1759655554.084883, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655554.084949, "reason": "noise_pattern", "text": "Order placed on 06 Jul, 1:57PM"}
+{"ts": 1759655554.084973, "reason": "noise_pattern", "text": "Delivered 420.25"}
+{"ts": 1759655554.085015, "reason": "noise_pattern", "text": "@ 1x Boneless Special Mutton Biryani"}
+{"ts": 1759655554.0850492, "reason": "noise_pattern", "text": "Order placed on 29 Jun, 1.13°M"}
+{"ts": 1759655554.085073, "reason": "noise_pattern", "text": "Delivered 7410.00"}
+{"ts": 1759655554.085112, "reason": "noise_pattern", "text": "@ 1x Boneless Special Chicken Biryani"}
+{"ts": 1759655554.08515, "reason": "noise_pattern", "text": "Order placed on 05 Jun, 12:51PM"}
+{"ts": 1759655554.085171, "reason": "noise_pattern", "text": "Delivered 245.00"}
+{"ts": 1759655554.51217, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759655554.5123022, "reason": "noise_pattern", "text": "Q Search by restaurant or dish g"}
+{"ts": 1759655554.512396, "reason": "noise_pattern", "text": "Order placed on 10 Jul, 9:21PM"}
+{"ts": 1759655554.5124328, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655554.5125, "reason": "noise_pattern", "text": "Order placed on 06 Jul, 1:57PM"}
+{"ts": 1759655554.5125241, "reason": "noise_pattern", "text": "Delivered 420.25"}
+{"ts": 1759655554.512589, "reason": "noise_pattern", "text": "@ 1x Boneless Special Mutton Biryani"}
+{"ts": 1759655554.512627, "reason": "noise_pattern", "text": "Order placed on 29 Jun, 1.13°M"}
+{"ts": 1759655554.512652, "reason": "noise_pattern", "text": "Delivered 7410.00"}
+{"ts": 1759655554.5126941, "reason": "noise_pattern", "text": "@ 1x Boneless Special Chicken Biryani"}
+{"ts": 1759655554.5127308, "reason": "noise_pattern", "text": "Order placed on 05 Jun, 12:51PM"}
+{"ts": 1759655554.512755, "reason": "noise_pattern", "text": "Delivered 245.00"}
+{"ts": 1759655558.489834, "reason": "noise_pattern", "text": "Q Search by restaurant or dish a"}
+{"ts": 1759655558.4900339, "reason": "noise_pattern", "text": "Order placed on 02 Oct, 7:34PM"}
+{"ts": 1759655558.490079, "reason": "alpha_ratio_low", "text": "7265.70 -", "extra": {"text_no_price": "-"}}
+{"ts": 1759655558.490108, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655558.4901571, "reason": "low_confidence", "text": "y", "extra": {"max_conf": 1}}
+{"ts": 1759655558.4902122, "reason": "noise_pattern", "text": "Order placed on 28 Sep, 6:57PM"}
+{"ts": 1759655558.490238, "reason": "price_only", "text": "7162.00", "extra": {"text_no_price": ""}}
+{"ts": 1759655558.490263, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655807.893024, "reason": "noise_pattern", "text": "Q Search by restaurant or dish a"}
+{"ts": 1759655807.893697, "reason": "noise_pattern", "text": "Order placed on 02 Oct, 7:34PM"}
+{"ts": 1759655807.893756, "reason": "alpha_ratio_low", "text": "7265.70 -", "extra": {"text_no_price": "-"}}
+{"ts": 1759655807.89379, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759655807.8938339, "reason": "low_confidence", "text": "y", "extra": {"max_conf": 1}}
+{"ts": 1759655807.8938859, "reason": "noise_pattern", "text": "Order placed on 28 Sep, 6:57PM"}
+{"ts": 1759655807.893913, "reason": "price_only", "text": "7162.00", "extra": {"text_no_price": ""}}
+{"ts": 1759655807.8939352, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759656156.17712, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759656156.177509, "reason": "noise_pattern", "text": "Q Search by restaurant or dish g"}
+{"ts": 1759656156.1775959, "reason": "noise_pattern", "text": "Order placed on 10 Jul, 9:21PM"}
+{"ts": 1759656156.1776261, "reason": "noise_pattern", "text": "Delivered"}
+{"ts": 1759656156.177691, "reason": "noise_pattern", "text": "Order placed on 06 Jul, 1:57PM"}
+{"ts": 1759656156.177718, "reason": "noise_pattern", "text": "Delivered 420.25"}
+{"ts": 1759656156.177762, "reason": "noise_pattern", "text": "@ 1x Boneless Special Mutton Biryani"}
+{"ts": 1759656156.177797, "reason": "noise_pattern", "text": "Order placed on 29 Jun, 1.13°M"}
+{"ts": 1759656156.177821, "reason": "noise_pattern", "text": "Delivered 7410.00"}
+{"ts": 1759656156.17786, "reason": "noise_pattern", "text": "@ 1x Boneless Special Chicken Biryani"}
+{"ts": 1759656156.1778948, "reason": "noise_pattern", "text": "Order placed on 05 Jun, 12:51PM"}
+{"ts": 1759656156.177919, "reason": "noise_pattern", "text": "Delivered 245.00"}
+{"ts": 1759656231.103992, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759656231.104364, "reason": "noise_pattern", "text": "Q Search by restaurant or dish Q"}
+{"ts": 1759656231.104409, "reason": "noise_pattern", "text": "Harsha Deluxe Mess |"}
+{"ts": 1759656231.1044638, "reason": "noise_pattern", "text": "Serves 2"}
+{"ts": 1759656231.1044962, "reason": "noise_pattern", "text": "Order placed on 06 Sep. 12560"}
+{"ts": 1759656231.104526, "reason": "noise_pattern", "text": "Delivered P56L.25"}
+{"ts": 1759656231.1045702, "reason": "too_short_token", "text": "vn =", "extra": {"cleaned": "vn"}}
+{"ts": 1759656231.104606, "reason": "noise_pattern", "text": "Red Bucket Biryani"}
+{"ts": 1759656231.10464, "reason": "noise_pattern", "text": "@ 1 x Special Chicken Biryoni [mini Bucket]"}
+{"ts": 1759656231.1046631, "reason": "noise_pattern", "text": "Order placed an 1a Aug, 924M"}
+{"ts": 1759656231.104686, "reason": "noise_pattern", "text": "Delivered 155.00"}
+{"ts": 1759656231.1047308, "reason": "too_short_token", "text": "ve =", "extra": {"cleaned": "ve"}}
+{"ts": 1759656231.104776, "reason": "noise_pattern", "text": "@ 1x Donne Chicken Biryani Combo"}
+{"ts": 1759656231.104813, "reason": "noise_pattern", "text": "Delivered 54200"}
+{"ts": 1759656231.104845, "reason": "noise_pattern", "text": "Harsha Deluxe Mess |"}
+{"ts": 1759656231.104882, "reason": "noise_pattern", "text": "(Serves 2"}
+{"ts": 1759656231.104905, "reason": "noise_pattern", "text": "Order placed on 10 Aug, 1.49PM,"}
+{"ts": 1759656231.1049302, "reason": "price_only", "text": "7350.30", "extra": {"text_no_price": ""}}
+{"ts": 1759660494.099036, "reason": "noise_pattern", "text": "© Your Orders"}
+{"ts": 1759660494.099411, "reason": "noise_pattern", "text": "Q Search by restaurant or dish Q"}
+{"ts": 1759660494.099448, "reason": "noise_pattern", "text": "Harsha Deluxe Mess |"}
+{"ts": 1759660494.099503, "reason": "noise_pattern", "text": "Serves 2"}
+{"ts": 1759660494.099531, "reason": "noise_pattern", "text": "Order placed on 06 Sep. 12560"}
+{"ts": 1759660494.0995572, "reason": "noise_pattern", "text": "Delivered P56L.25"}
+{"ts": 1759660494.099597, "reason": "too_short_token", "text": "vn =", "extra": {"cleaned": "vn"}}
+{"ts": 1759660494.099624, "reason": "noise_pattern", "text": "Red Bucket Biryani"}
+{"ts": 1759660494.099658, "reason": "noise_pattern", "text": "@ 1 x Special Chicken Biryoni [mini Bucket]"}
+{"ts": 1759660494.099683, "reason": "noise_pattern", "text": "Order placed an 1a Aug, 924M"}
+{"ts": 1759660494.0997078, "reason": "noise_pattern", "text": "Delivered 155.00"}
+{"ts": 1759660494.099736, "reason": "too_short_token", "text": "ve =", "extra": {"cleaned": "ve"}}
+{"ts": 1759660494.099781, "reason": "noise_pattern", "text": "@ 1x Donne Chicken Biryani Combo"}
+{"ts": 1759660494.099815, "reason": "noise_pattern", "text": "Delivered 54200"}
+{"ts": 1759660494.0998468, "reason": "noise_pattern", "text": "Harsha Deluxe Mess |"}
+{"ts": 1759660494.099883, "reason": "noise_pattern", "text": "(Serves 2"}
+{"ts": 1759660494.099906, "reason": "noise_pattern", "text": "Order placed on 10 Aug, 1.49PM,"}
+{"ts": 1759660494.099929, "reason": "price_only", "text": "7350.30", "extra": {"text_no_price": ""}}

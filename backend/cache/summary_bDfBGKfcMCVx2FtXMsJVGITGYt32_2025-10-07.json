@@ -1,0 +1,42 @@
+{
+  "parsed": {
+    "summary_date": "2025-10-07",
+    "user_id": "bDfBGKfcMCVx2FtXMsJVGITGYt32",
+    "totals": {
+      "calories_kcal": 0.0,
+      "protein_g": 0.0,
+      "carbs_g": 0.0,
+      "fats_g": 0.0,
+      "fiber_g": 0.0,
+      "sodium_mg": 0.0,
+      "vitamin_c_mg": 0.0,
+      "iron_mg": 0.0,
+      "calcium_mg": 0.0
+    },
+    "percent_dv": {
+      "calories_kcal": 0.0,
+      "protein_g": 0.0,
+      "sodium_mg": 0.0,
+      "vitamin_c_mg": 0.0,
+      "iron_mg": 0.0,
+      "calcium_mg": 0.0
+    },
+    "meal_cards": [],
+    "insights": {
+      "wins": [],
+      "improvements": [],
+      "quick_tips": [
+        "Remember to log your meals to get personalized insights!",
+        "Tracking helps you understand your eating habits and reach your goals."
+      ]
+    },
+    "confidence": "low"
+  },
+  "totals": {
+    "calories": 0.0,
+    "protein": 0.0,
+    "carbs": 0.0,
+    "fats": 0.0
+  },
+  "firestore_saved": null
+}

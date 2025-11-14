@@ -1,0 +1,80 @@
+/* StickerFieldAnimated.css */
+.sticker-field-animated {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* let UI interactions pass through unless dragged */
+  overflow: hidden;
+  z-index: 6;
+}
+
+/* Each sticker is positioned absolutely inside the container */
+.sticker-item {
+  position: absolute;
+  pointer-events: auto; /* allow dragging/click */
+  display: grid;
+  place-items: center;
+  transform-origin: center;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* inner wrapper to apply parallax motion */
+.sticker-inner {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+/* emoji style */
+.sticker-emoji .emoji {
+  font-size: calc(var(--size, 32px));
+  line-height: 1;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transform-origin: center;
+}
+
+/* png sticker */
+.sticker-png img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* gentle float animation */
+@keyframes floatY {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+.sticker-item {
+  animation: floatY 4s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .sticker-item {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* when dragging - framer sets inline styles, but let's keep pointer cursor */
+.sticker-item:active {
+  cursor: grabbing;
+}
+
+/* smaller screens: reduce count visible by clipping and scale down */
+@media (max-width: 800px) {
+  .sticker-item {
+    opacity: 0.9;
+  }
+}

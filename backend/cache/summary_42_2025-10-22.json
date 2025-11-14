@@ -1,0 +1,56 @@
+{
+  "parsed": {
+    "summary_date": "2025-10-22",
+    "user_id": "42",
+    "totals": {
+      "calories_kcal": 940.0,
+      "protein_g": 30.0,
+      "total_carbohydrate_g": 100.0,
+      "total_lipid_(fat)_g": 43.0
+    },
+    "percent_dv": {},
+    "meal_cards": [
+      {
+        "item": "Paneer Butter Masala",
+        "calories_kcal": 420.0,
+        "protein_g": 18.0,
+        "total_carbohydrate_g": 30.0,
+        "total_lipid_(fat)_g": 25.0
+      },
+      {
+        "item": "Veg Biryani",
+        "calories_kcal": 520.0,
+        "protein_g": 12.0,
+        "total_carbohydrate_g": 70.0,
+        "total_lipid_(fat)_g": 18.0
+      }
+    ],
+    "insights": {
+      "wins": [
+        "You successfully logged your meals for the day, which is a great step towards understanding your nutrition!",
+        "Your meals provided a good amount of energy (940 kcal) to fuel your day."
+      ],
+      "improvements": [
+        "Only two meals were logged, suggesting potential gaps in your daily intake (e.g., breakfast, snacks).",
+        "The meals chosen, Paneer Butter Masala and Veg Biryani, are both quite rich, contributing to a higher fat intake (43g) relative to protein (30g) for the total calories. While carbs are a good energy source (100g), aiming for a more balanced macro distribution with higher protein could be beneficial for satiety and muscle health."
+      ],
+      "quick_tips": [
+        "Try to log all your meals and snacks to get a complete picture of your daily intake.",
+        "Consider incorporating more lean protein sources (e.g., lentils, tofu, beans) to help balance your macros and increase satiety.",
+        "Add more fiber-rich vegetables and fruits to your meals for added nutrients and to boost your overall intake of micronutrients."
+      ]
+    },
+    "confidence": "medium"
+  },
+  "parsed_json_text": "{\n  \"summary_date\": \"2025-10-22\",\n  \"user_id\": \"42\",\n  \"totals\": {\n    \"calories_kcal\": 940.0,\n    \"protein_g\": 30.0,\n    \"total_carbohydrate_g\": 100.0,\n    \"total_lipid_(fat)_g\": 43.0\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Paneer Butter Masala\",\n      \"calories_kcal\": 420.0,\n      \"protein_g\": 18.0,\n      \"total_carbohydrate_g\": 30.0,\n      \"total_lipid_(fat)_g\": 25.0\n    },\n    {\n      \"item\": \"Veg Biryani\",\n      \"calories_kcal\": 520.0,\n      \"protein_g\": 12.0,\n      \"total_carbohydrate_g\": 70.0,\n      \"total_lipid_(fat)_g\": 18.0\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"You successfully logged your meals for the day, which is a great step towards understanding your nutrition!\",\n      \"Your meals provided a good amount of energy (940 kcal) to fuel your day.\"\n    ],\n    \"improvements\": [\n      \"Only two meals were logged, suggesting potential gaps in your daily intake (e.g., breakfast, snacks).\",\n      \"The meals chosen, Paneer Butter Masala and Veg Biryani, are both quite rich, contributing to a higher fat intake (43g) relative to protein (30g) for the total calories. While carbs are a good energy source (100g), aiming for a more balanced macro distribution with higher protein could be beneficial for satiety and muscle health.\"\n    ],\n    \"quick_tips\": [\n      \"Try to log all your meals and snacks to get a complete picture of your daily intake.\",\n      \"Consider incorporating more lean protein sources (e.g., lentils, tofu, beans) to help balance your macros and increase satiety.\",\n      \"Add more fiber-rich vegetables and fruits to your meals for added nutrients and to boost your overall intake of micronutrients.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}",
+  "human_summary": "```\n\n### Daily Nutrition Recap\n\nHere's a look at your nutrition for October 22nd, 2025. You logged two meals today: Paneer Butter Masala and Veg Biryani. Your total intake for these logged meals comes to 940 calories, with 30 grams of protein, 100 grams of carbohydrates, and 43 grams of total fat.\n\nIt's great that you're actively tracking your meals! Logging your food is a fantastic way to build awareness of your eating habits and provides a solid foundation for making informed nutritional choices. The meals you consumed provided a substantial amount of energy, which is important for daily functioning.\n\nHowever, with only two meals logged, there might be gaps in your daily intake, such as breakfast or snacks, which could impact your overall nutrient profile. The combination of Paneer Butter Masala and Veg Biryani, while delicious, tends to be rich in fats and carbohydrates. To optimize your nutrition, you might consider aiming for a more balanced macronutrient distribution, particularly by increasing your protein intake relative to fats and carbs.\n\nFor future improvements, try to log all your meals and snacks to get a comprehensive view of your daily nutrition. Incorporating more lean protein sources and a wider variety of fiber-rich vegetables and fruits throughout your day can help you achieve a more balanced and nutrient-dense diet. Remember to also stay well-hydrated!",
+  "totals": {
+    "calories": 940.0,
+    "protein": 30.0,
+    "carbs": 100.0,
+    "fats": 43.0
+  },
+  "firestore_saved": null,
+  "raw_ai_text_snippet": "```json\n{\n  \"summary_date\": \"2025-10-22\",\n  \"user_id\": \"42\",\n  \"totals\": {\n    \"calories_kcal\": 940.0,\n    \"protein_g\": 30.0,\n    \"total_carbohydrate_g\": 100.0,\n    \"total_lipid_(fat)_g\": 43.0\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Paneer Butter Masala\",\n      \"calories_kcal\": 420.0,\n      \"protein_g\": 18.0,\n      \"total_carbohydrate_g\": 30.0,\n      \"total_lipid_(fat)_g\": 25.0\n    },\n    {\n      \"item\": \"Veg Biryani\",\n      \"calories_kcal\": 520.0,\n      \"protein_g\": 12.0,\n      \"total_carbohydrate_g\": 70.0,\n      \"total_lipid_(fat)_g\": 18.0\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"You successfully logged your meals for the day, which is a great step towards understanding your nutrition!\",\n      \"Your meals provided a good amount of energy (940 kcal) to fuel your day.\"\n    ],\n    \"improvements\": [\n      \"Only two meals were logged, suggesting potential gaps in your daily intake (e.g., breakfast, snacks).\",\n      \"The meals chosen, Paneer Butter Masala and Veg Biryani, are both quite rich, contributing to a higher fat intake (43g) relative to protein (30g) for the total calories. While carbs are a good energy source (100g), aiming for a more balanced macro distribution with higher protein could be beneficial for satiety and muscle health.\"\n    ],\n    \"quick_tips\": [\n      \"Try to log all your meals and snacks to get a complete picture of your daily intake.\",\n      \"Consider incorporating more lean protein sources (e.g., lentils, tofu, beans) to help balance your macros and increase satiety.\",\n      \"Add more fiber-rich vegetables and fruits to your meals for added nutrients and to boost your overall intake of micronutrients.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}\n```\n\n### Daily Nutrition Recap\n\nHere's a look at your nutrition for October 22nd, 2025. You logged two meals today: Paneer Butter Masala and Veg Biryani. Your total intake for these logged meals comes to 940 calories, with 30 grams of protein, 100 grams of carbohydrates, and 43 grams of total fat.\n\nIt's great that you're actively tracking your meals! Logging your food is a fantastic way to build awareness of your eating habits and provides a solid foundation for making informed nutritional choices. The meals you consumed provided a substantial amount of energy, which is important for daily functioning.\n\nHowever, with only two meals logged, there might be gaps in your daily intake, such as breakfast or snacks, which could impact your overall nutrient profile. The combination of Paneer Butter Masala and Veg Biryani, while delicious, tends to be rich in fats and carbohydrates. To optimize your nutrition, you might consider aiming for a more balanced macronutrient distribution, particularly by increasing your protein intake relative to fats and carbs.\n\nFor future improvements, try to log all your meals and snacks to get a comprehensive view of your daily nutrition. Incorporating more lean protein sources and a wider variety of fiber-rich vegetables and fruits throughout your day can help you achieve a more balanced and nutrient-dense diet. Remember to also stay well-hydrated!",
+  "generated_at": "2025-10-22T21:41:20"
+}

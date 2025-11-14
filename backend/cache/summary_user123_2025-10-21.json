@@ -1,0 +1,88 @@
+{
+  "parsed": {
+    "summary_date": "2025-10-21",
+    "user_id": "user123",
+    "totals": {
+      "calories_kcal": 1370.0,
+      "protein_g": 45.0,
+      "total_carbohydrate_g": 157.0,
+      "total_lipid_(fat)_g": 58.0
+    },
+    "percent_dv": {},
+    "meal_cards": [
+      {
+        "item": "Paneer Butter Masala",
+        "calories": 450,
+        "macros": {
+          "protein": 18,
+          "carbs": 20,
+          "fats": 30
+        }
+      },
+      {
+        "item": "Veg Biryani",
+        "calories": 420,
+        "macros": {
+          "protein": 10,
+          "carbs": 60,
+          "fats": 15
+        }
+      },
+      {
+        "item": "Mango Lassi",
+        "calories": 200,
+        "macros": {
+          "protein": 5,
+          "carbs": 30,
+          "fats": 6
+        }
+      },
+      {
+        "item": "Dal Tadka",
+        "calories": 180,
+        "macros": {
+          "protein": 8,
+          "carbs": 25,
+          "fats": 5
+        }
+      },
+      {
+        "item": "Roti",
+        "calories": 120,
+        "macros": {
+          "protein": 4,
+          "carbs": 22,
+          "fats": 2
+        }
+      }
+    ],
+    "insights": {
+      "wins": [
+        "Good variety of traditional Indian dishes, offering diverse flavors.",
+        "Included protein sources like paneer and dal, contributing to muscle maintenance and satiety."
+      ],
+      "improvements": [
+        "The overall fat intake, particularly from dishes like Paneer Butter Masala, is notable and could be an area to monitor.",
+        "While carbohydrates are present, incorporating more fiber-rich, non-starchy vegetables beyond the biryani could enhance nutrient density and digestive health.",
+        "The log doesn't explicitly show a wide range of fresh fruits (beyond the mango lassi) or additional vegetable servings."
+      ],
+      "quick_tips": [
+        "Consider opting for leaner versions of dishes or reducing portion sizes of richer items like Paneer Butter Masala.",
+        "Aim to include a side salad or a serving of steamed/sautéed vegetables with your main meals to boost fiber and micronutrients.",
+        "Ensure adequate hydration throughout the day, especially with a diet that can be rich in spices."
+      ]
+    },
+    "confidence": "medium"
+  },
+  "parsed_json_text": "{\n  \"summary_date\": \"2025-10-21\",\n  \"user_id\": \"user123\",\n  \"totals\": {\n    \"calories_kcal\": 1370.0,\n    \"protein_g\": 45.0,\n    \"total_carbohydrate_g\": 157.0,\n    \"total_lipid_(fat)_g\": 58.0\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Paneer Butter Masala\",\n      \"calories\": 450,\n      \"macros\": {\n        \"protein\": 18,\n        \"carbs\": 20,\n        \"fats\": 30\n      }\n    },\n    {\n      \"item\": \"Veg Biryani\",\n      \"calories\": 420,\n      \"macros\": {\n        \"protein\": 10,\n        \"carbs\": 60,\n        \"fats\": 15\n      }\n    },\n    {\n      \"item\": \"Mango Lassi\",\n      \"calories\": 200,\n      \"macros\": {\n        \"protein\": 5,\n        \"carbs\": 30,\n        \"fats\": 6\n      }\n    },\n    {\n      \"item\": \"Dal Tadka\",\n      \"calories\": 180,\n      \"macros\": {\n        \"protein\": 8,\n        \"carbs\": 25,\n        \"fats\": 5\n      }\n    },\n    {\n      \"item\": \"Roti\",\n      \"calories\": 120,\n      \"macros\": {\n        \"protein\": 4,\n        \"carbs\": 22,\n        \"fats\": 2\n      }\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"Good variety of traditional Indian dishes, offering diverse flavors.\",\n      \"Included protein sources like paneer and dal, contributing to muscle maintenance and satiety.\"\n    ],\n    \"improvements\": [\n      \"The overall fat intake, particularly from dishes like Paneer Butter Masala, is notable and could be an area to monitor.\",\n      \"While carbohydrates are present, incorporating more fiber-rich, non-starchy vegetables beyond the biryani could enhance nutrient density and digestive health.\",\n      \"The log doesn't explicitly show a wide range of fresh fruits (beyond the mango lassi) or additional vegetable servings.\"\n    ],\n    \"quick_tips\": [\n      \"Consider opting for leaner versions of dishes or reducing portion sizes of richer items like Paneer Butter Masala.\",\n      \"Aim to include a side salad or a serving of steamed/sautéed vegetables with your main meals to boost fiber and micronutrients.\",\n      \"Ensure adequate hydration throughout the day, especially with a diet that can be rich in spices.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}",
+  "human_summary": "```\n\n### Daily Nutrition Recap\n\nOn October 21st, your meals totaled 1370 calories, with a macronutrient breakdown of 45g protein, 157g carbohydrates, and 58g fats. Your day featured a delicious selection of Indian cuisine, including Paneer Butter Masala, Veg Biryani, Mango Lassi, Dal Tadka, and Roti.\n\nYou did well to include good protein sources like paneer and dal, which are essential for muscle health and keeping you feeling full. The variety in your meal choices also ensures a broad spectrum of flavors and some essential nutrients from different ingredients.\n\nLooking ahead, there are a couple of areas to consider for an even more balanced intake. The fat content, particularly from dishes like Paneer Butter Masala, is quite significant. Additionally, while you had some vegetables in the biryani, incorporating more non-starchy vegetables and fresh fruits throughout the day could boost your fiber and micronutrient intake.\n\nTo enhance your nutrition, try to include a side salad or a serving of steamed vegetables with your meals. You might also consider opting for leaner preparations of some dishes or adjusting portion sizes of richer items. Remember to stay well-hydrated, especially when enjoying flavorful and spiced meals.",
+  "totals": {
+    "calories": 1370.0,
+    "protein": 45.0,
+    "carbs": 157.0,
+    "fats": 58.0
+  },
+  "firestore_saved": null,
+  "raw_ai_text_snippet": "```json\n{\n  \"summary_date\": \"2025-10-21\",\n  \"user_id\": \"user123\",\n  \"totals\": {\n    \"calories_kcal\": 1370.0,\n    \"protein_g\": 45.0,\n    \"total_carbohydrate_g\": 157.0,\n    \"total_lipid_(fat)_g\": 58.0\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Paneer Butter Masala\",\n      \"calories\": 450,\n      \"macros\": {\n        \"protein\": 18,\n        \"carbs\": 20,\n        \"fats\": 30\n      }\n    },\n    {\n      \"item\": \"Veg Biryani\",\n      \"calories\": 420,\n      \"macros\": {\n        \"protein\": 10,\n        \"carbs\": 60,\n        \"fats\": 15\n      }\n    },\n    {\n      \"item\": \"Mango Lassi\",\n      \"calories\": 200,\n      \"macros\": {\n        \"protein\": 5,\n        \"carbs\": 30,\n        \"fats\": 6\n      }\n    },\n    {\n      \"item\": \"Dal Tadka\",\n      \"calories\": 180,\n      \"macros\": {\n        \"protein\": 8,\n        \"carbs\": 25,\n        \"fats\": 5\n      }\n    },\n    {\n      \"item\": \"Roti\",\n      \"calories\": 120,\n      \"macros\": {\n        \"protein\": 4,\n        \"carbs\": 22,\n        \"fats\": 2\n      }\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"Good variety of traditional Indian dishes, offering diverse flavors.\",\n      \"Included protein sources like paneer and dal, contributing to muscle maintenance and satiety.\"\n    ],\n    \"improvements\": [\n      \"The overall fat intake, particularly from dishes like Paneer Butter Masala, is notable and could be an area to monitor.\",\n      \"While carbohydrates are present, incorporating more fiber-rich, non-starchy vegetables beyond the biryani could enhance nutrient density and digestive health.\",\n      \"The log doesn't explicitly show a wide range of fresh fruits (beyond the mango lassi) or additional vegetable servings.\"\n    ],\n    \"quick_tips\": [\n      \"Consider opting for leaner versions of dishes or reducing portion sizes of richer items like Paneer Butter Masala.\",\n      \"Aim to include a side salad or a serving of steamed/sautéed vegetables with your main meals to boost fiber and micronutrients.\",\n      \"Ensure adequate hydration throughout the day, especially with a diet that can be rich in spices.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}\n```\n\n### Daily Nutrition Recap\n\nOn October 21st, your meals totaled 1370 calories, with a macronutrient breakdown of 45g protein, 157g carbohydrates, and 58g fats. Your day featured a delicious selection of Indian cuisine, including Paneer Butter Masala, Veg Biryani, Mango Lassi, Dal Tadka, and Roti.\n\nYou did well to include good protein sources like paneer and dal, which are essential for muscle health and keeping you feeling full. The variety in your meal choices also ensures a broad spectrum of flavors and some essential nutrients from different ingredients.\n\nLooking ahead, there are a couple of areas to consider for an even more balanced intake. The fat content, particularly from dishes like Paneer Butter Masala, is quite significant. Additionally, while you had some vegetables in the biryani, incorporating more non-starchy vegetables and fresh fruits throughout the day could boost your fiber and micronutrient intake.\n\nTo enhance your nutrition, try to include a side salad or a serving of steamed vegetables with your meals. You might also consider opting for leaner preparations of some dishes or adjusting portion sizes of richer items. Remember to stay well-hydrated, especially when enjoying flavorful and spiced meals.",
+  "generated_at": "2025-10-21T22:59:47"
+}

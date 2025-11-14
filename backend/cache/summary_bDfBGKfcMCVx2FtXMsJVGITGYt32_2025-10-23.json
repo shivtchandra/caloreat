@@ -1,0 +1,65 @@
+{
+  "parsed": {
+    "summary_date": "2025-10-23",
+    "user_id": "bDfBGKfcMCVx2FtXMsJVGITGYt32",
+    "totals": {
+      "calories_kcal": 841.0,
+      "protein_g": 27.91,
+      "total_carbohydrate_g": 84.05,
+      "total_lipid_(fat)_g": 42.43
+    },
+    "percent_dv": {},
+    "meal_cards": [
+      {
+        "item": "Panner rice",
+        "calories_kcal": 541.0,
+        "protein_g": 5.41,
+        "total_carbohydrate_g": 54.05,
+        "total_lipid_(fat)_g": 32.43,
+        "sugars_g": 54.05,
+        "dietary_fiber_g": 2.7,
+        "fatty_acids,_total_saturated_g": 5.41,
+        "sodium_mg": 81.0,
+        "calcium_mg": 162.0,
+        "iron_mg": 4.86
+      },
+      {
+        "item": "manchuria",
+        "calories_kcal": 300.0,
+        "protein_g": 22.5,
+        "total_carbohydrate_g": 30.0,
+        "total_lipid_(fat)_g": 10.0
+      }
+    ],
+    "insights": {
+      "wins": [
+        "Your total calorie intake for the day was moderate at 841 kcal.",
+        "You consumed some essential minerals like calcium and iron from the Panner rice."
+      ],
+      "improvements": [
+        "Protein intake (27.91g) was significantly low for a full day, which is crucial for muscle support and satiety.",
+        "The Panner rice meal contributed a high amount of sugars (54.05g), making up a large portion of your total carbohydrates.",
+        "Dietary fiber intake was very low (2.7g), which is important for digestive health and blood sugar regulation.",
+        "The Panner rice meal was high in total fat, including saturated fat."
+      ],
+      "quick_tips": [
+        "Incorporate more lean protein sources such as chicken, fish, beans, or lentils into your meals to boost your protein intake.",
+        "Increase your consumption of fruits, vegetables, and whole grains to significantly improve your dietary fiber intake.",
+        "Be mindful of added sugars in your meals; consider healthier carbohydrate sources with lower sugar content.",
+        "Aim for a balanced plate with a good source of lean protein, complex carbohydrates, and healthy fats at each meal."
+      ]
+    },
+    "confidence": "medium"
+  },
+  "parsed_json_text": "{\n  \"summary_date\": \"2025-10-23\",\n  \"user_id\": \"bDfBGKfcMCVx2FtXMsJVGITGYt32\",\n  \"totals\": {\n    \"calories_kcal\": 841.0,\n    \"protein_g\": 27.91,\n    \"total_carbohydrate_g\": 84.05,\n    \"total_lipid_(fat)_g\": 42.43\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Panner rice\",\n      \"calories_kcal\": 541.0,\n      \"protein_g\": 5.41,\n      \"total_carbohydrate_g\": 54.05,\n      \"total_lipid_(fat)_g\": 32.43,\n      \"sugars_g\": 54.05,\n      \"dietary_fiber_g\": 2.7,\n      \"fatty_acids,_total_saturated_g\": 5.41,\n      \"sodium_mg\": 81.0,\n      \"calcium_mg\": 162.0,\n      \"iron_mg\": 4.86\n    },\n    {\n      \"item\": \"manchuria\",\n      \"calories_kcal\": 300.0,\n      \"protein_g\": 22.5,\n      \"total_carbohydrate_g\": 30.0,\n      \"total_lipid_(fat)_g\": 10.0\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"Your total calorie intake for the day was moderate at 841 kcal.\",\n      \"You consumed some essential minerals like calcium and iron from the Panner rice.\"\n    ],\n    \"improvements\": [\n      \"Protein intake (27.91g) was significantly low for a full day, which is crucial for muscle support and satiety.\",\n      \"The Panner rice meal contributed a high amount of sugars (54.05g), making up a large portion of your total carbohydrates.\",\n      \"Dietary fiber intake was very low (2.7g), which is important for digestive health and blood sugar regulation.\",\n      \"The Panner rice meal was high in total fat, including saturated fat.\"\n    ],\n    \"quick_tips\": [\n      \"Incorporate more lean protein sources such as chicken, fish, beans, or lentils into your meals to boost your protein intake.\",\n      \"Increase your consumption of fruits, vegetables, and whole grains to significantly improve your dietary fiber intake.\",\n      \"Be mindful of added sugars in your meals; consider healthier carbohydrate sources with lower sugar content.\",\n      \"Aim for a balanced plate with a good source of lean protein, complex carbohydrates, and healthy fats at each meal.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}",
+  "human_summary": "```\n\n### Daily Nutrition Recap\n\nOn October 23rd, your recorded meals consisted of \"Panner rice\" and \"manchuria,\" totaling 841 calories. Your macronutrient breakdown for the day included 27.91g of protein, 84.05g of total carbohydrates, and 42.43g of total fat.\n\nThe \"Panner rice\" meal contributed 541 calories, with 5.41g protein, 54.05g carbohydrates (including a high 54.05g of sugars), and 32.43g fat (5.41g saturated). It also provided 2.7g of dietary fiber, along with some calcium (162mg) and iron (4.86mg). Your \"manchuria\" meal added 300 calories, with a more substantial 22.5g protein, 30g carbohydrates, and 10g fat.\n\nWhile your overall calorie intake was moderate, there are clear opportunities to enhance your nutritional balance. Your total protein intake was quite low for the day, which is essential for muscle maintenance and satiety. The \"Panner rice\" meal was notably high in sugars and fats, and your overall fiber intake was minimal.\n\nTo improve your nutritional profile, consider incorporating more lean protein sources like chicken, fish, or legumes into your meals. Boosting your intake of fiber-rich vegetables, fruits, and whole grains would also be beneficial for digestive health and sustained energy. Being mindful of added sugars and unhealthy fats, opting for whole, unprocessed foods whenever possible, will help you achieve a more balanced and nutrient-dense diet.",
+  "totals": {
+    "calories": 841.0,
+    "protein": 0.0,
+    "carbs": 0.0,
+    "fats": 0.0
+  },
+  "firestore_saved": null,
+  "raw_ai_text_snippet": "```json\n{\n  \"summary_date\": \"2025-10-23\",\n  \"user_id\": \"bDfBGKfcMCVx2FtXMsJVGITGYt32\",\n  \"totals\": {\n    \"calories_kcal\": 841.0,\n    \"protein_g\": 27.91,\n    \"total_carbohydrate_g\": 84.05,\n    \"total_lipid_(fat)_g\": 42.43\n  },\n  \"percent_dv\": {},\n  \"meal_cards\": [\n    {\n      \"item\": \"Panner rice\",\n      \"calories_kcal\": 541.0,\n      \"protein_g\": 5.41,\n      \"total_carbohydrate_g\": 54.05,\n      \"total_lipid_(fat)_g\": 32.43,\n      \"sugars_g\": 54.05,\n      \"dietary_fiber_g\": 2.7,\n      \"fatty_acids,_total_saturated_g\": 5.41,\n      \"sodium_mg\": 81.0,\n      \"calcium_mg\": 162.0,\n      \"iron_mg\": 4.86\n    },\n    {\n      \"item\": \"manchuria\",\n      \"calories_kcal\": 300.0,\n      \"protein_g\": 22.5,\n      \"total_carbohydrate_g\": 30.0,\n      \"total_lipid_(fat)_g\": 10.0\n    }\n  ],\n  \"insights\": {\n    \"wins\": [\n      \"Your total calorie intake for the day was moderate at 841 kcal.\",\n      \"You consumed some essential minerals like calcium and iron from the Panner rice.\"\n    ],\n    \"improvements\": [\n      \"Protein intake (27.91g) was significantly low for a full day, which is crucial for muscle support and satiety.\",\n      \"The Panner rice meal contributed a high amount of sugars (54.05g), making up a large portion of your total carbohydrates.\",\n      \"Dietary fiber intake was very low (2.7g), which is important for digestive health and blood sugar regulation.\",\n      \"The Panner rice meal was high in total fat, including saturated fat.\"\n    ],\n    \"quick_tips\": [\n      \"Incorporate more lean protein sources such as chicken, fish, beans, or lentils into your meals to boost your protein intake.\",\n      \"Increase your consumption of fruits, vegetables, and whole grains to significantly improve your dietary fiber intake.\",\n      \"Be mindful of added sugars in your meals; consider healthier carbohydrate sources with lower sugar content.\",\n      \"Aim for a balanced plate with a good source of lean protein, complex carbohydrates, and healthy fats at each meal.\"\n    ]\n  },\n  \"confidence\": \"medium\"\n}\n```\n\n### Daily Nutrition Recap\n\nOn October 23rd, your recorded meals consisted of \"Panner rice\" and \"manchuria,\" totaling 841 calories. Your macronutrient breakdown for the day included 27.91g of protein, 84.05g of total carbohydrates, and 42.43g of total fat.\n\nThe \"Panner rice\" meal contributed 541 calories, with 5.41g protein, 54.05g carbohydrates (including a high 54.05g of sugars), and 32.43g fat (5.41g saturated). It also provided 2.7g of dietary fiber, along with some calcium (162mg) and iron (4.86mg). Your \"manchuria\" meal added 300 calories, with a more substantial 22.5g protein, 30g carbohydrates, and 10g fat.\n\nWhile your overall calorie intake was moderate, there are clear opportunities to enhance your nutritional balance. Your total protein intake was quite low for the day, which is essential for muscle maintenance and satiety. The \"Panner rice\" meal was notably high in sugars and fats, and your overall fiber intake was minimal.\n\nTo improve your nutritional profile, consider incorporating more lean protein sources like chicken, fish, or legumes into your meals. Boosting your intake of fiber-rich vegetables, fruits, and whole grains would also be beneficial for digestive health and sustained energy. Being mindful of added sugars and unhealthy fats, opting for whole, unprocessed foods whenever possible, will help you achieve a more balanced and nutrient-dense diet.",
+  "generated_at": "2025-10-23T17:49:54"
+}
