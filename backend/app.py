@@ -47,6 +47,11 @@ except Exception:
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, JSON as SAJSON
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+
+@app.get("/")
+def root():
+    return {"message": "Caloreat backend is running 🚀"}
+
 # ---------- Setup ----------
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("food-ai")
