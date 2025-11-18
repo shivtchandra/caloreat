@@ -48,9 +48,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, JSON as
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 
-@app.get("/")
-def root():
-    return {"message": "Caloreat backend is running 🚀"}
+
 
 # ---------- Setup ----------
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -107,6 +105,9 @@ app = FastAPI(title="Food AI API")
 app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
 )
+@app.get("/")
+def root():
+    return {"message": "Caloreat backend is running 🚀"}
 
 # ---------- Utilities ----------
 def _normalize_name(s: str) -> str:
