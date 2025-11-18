@@ -1,16 +1,17 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+"""
+main.py
+Thin entrypoint used by Railway / Docker to start the real API defined in app.py.
 
-app = FastAPI(title="Caloreat Backend")
+Railway (see railway.toml and backend/Dockerfile) runs:
+  uvicorn main:app --host 0.0.0.0 --port $PORT
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # replace with production origin later
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+To avoid duplicating logic, we simply re-export the FastAPI instance from app.py
+and add a lightweight health endpoint on the same app.
+"""
+
+from app import app  # re-use the main FastAPI app defined in app.py
+
 
 @app.get("/health")
 def health():
-    return {"status":"ok"}
+    return {"status": "ok"}
