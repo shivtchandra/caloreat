@@ -1,14 +1,8 @@
+# backend/run.py
 import os
 import uvicorn
-
-def main():
-    port = int(os.getenv("PORT", "8000"))  # read PORT from env (Railway sets this)
-    uvicorn.run(
-        "app.main:app",   # 👉 change to your actual module:variable
-        host="0.0.0.0",
-        port=port,
-        reload=False      # keep False in production
-    )
+from app import app  # 👈 app.py in the same folder
 
 if __name__ == "__main__":
-    main()
+    port = int(os.getenv("PORT", "8000"))  # Railway sets PORT
+    uvicorn.run(app, host="0.0.0.0", port=port)
