@@ -1,5 +1,6 @@
 // src/NutritionHistory.jsx
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { db } from "./firebaseConfig";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
@@ -8,6 +9,7 @@ import MealMacroBar from "./components/MealMacroBar";
 import { LoaderOverlay, SushiConveyorLoader } from "./components/loaders.jsx";
 
 export default function NutritionHistory() {
+  const navigate = useNavigate();
   const user = getAuth().currentUser;
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,9 +85,39 @@ export default function NutritionHistory() {
 
       <div style={{ minHeight: "100vh", padding: 24, background: "linear-gradient(#fffaf2,#fff2e0)" }}>
         <div style={{ maxWidth: 960, margin: "0 auto" }}>
-          <h1 style={{ fontWeight: 800, fontSize: 26, color: "#4b4033", marginBottom: 18 }}>
-            Nutrition History 📅
-          </h1>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              flexWrap: "wrap",
+              marginBottom: 18,
+            }}
+          >
+            <button
+              onClick={() => navigate("/")}
+              style={{
+                border: "none",
+                borderRadius: 999,
+                padding: "8px 16px",
+                background: "#ffffff",
+                color: "#4b4033",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 8px 16px rgba(0,0,0,0.08)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              ← Home
+            </button>
+            <h1 style={{ fontWeight: 800, fontSize: 26, color: "#4b4033", margin: 0 }}>
+              Nutrition History 📅
+            </h1>
+            <div style={{ width: 120 }} />{/* spacer for alignment */}
+          </div>
 
           {/* Empty state */}
           {!loading && dates.length === 0 && (

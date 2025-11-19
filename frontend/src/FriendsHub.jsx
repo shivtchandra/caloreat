@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import StickerField from "./StickerField";
 import {
@@ -82,6 +83,21 @@ const styles = {
     fontSize: '14px',
     boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
     transition: 'all 0.25s ease',
+  },
+  homeButton: {
+    border: "1px solid rgba(255,255,255,0.4)",
+    borderRadius: "999px",
+    padding: "8px 16px",
+    background: "rgba(255,255,255,0.18)",
+    color: "white",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "14px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
+    backdropFilter: "blur(6px)",
   },
   primaryButton: {
     background: '#bca987',
@@ -215,6 +231,7 @@ const styles = {
 };
 
 export default function FriendsHub() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const uid = user?.uid;
 
@@ -224,13 +241,13 @@ export default function FriendsHub() {
   const [communities, setCommunities] = useState([]);
   const [userActivityDays, setUserActivityDays] = useState([]);
   const [currentStreak, setCurrentStreak] = useState(0);
-  
+
   // UI State
   const [activeTab, setActiveTab] = useState("friends");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  
+
   // Form inputs
   const [friendUidInput, setFriendUidInput] = useState("");
   const [messages, setMessages] = useState([]);
@@ -250,7 +267,7 @@ export default function FriendsHub() {
         });
         const sortedDays = Array.from(days).sort();
         setUserActivityDays(sortedDays);
-        
+
         // Calculate current streak
         const streak = calcStreakFromLogsRange(logs);
         setCurrentStreak(streak || 0);
@@ -269,7 +286,7 @@ export default function FriendsHub() {
           listIncomingRequests(uid),
           listFriends(uid),
         ]);
-        
+
         const enriched = await Promise.all(
           fs.map(async (f) => {
             const logs = await getFriendActivityWindow(f.uid, 60);
@@ -284,7 +301,7 @@ export default function FriendsHub() {
             };
           })
         );
-        
+
         setRequests(reqs || []);
         setFriends(enriched || []);
       } catch (e) {
@@ -309,7 +326,7 @@ export default function FriendsHub() {
         setFriendUidInput(addUid);
         setShowAddModal(true);
       }
-    } catch {}
+    } catch { }
   }, []);
 
   // Actions
@@ -376,7 +393,7 @@ export default function FriendsHub() {
   const generateCalendar = () => {
     const now = new Date();
     const calendars = [];
-    
+
     // Generate for 3 months (current + 2 previous)
     for (let monthOffset = 2; monthOffset >= 0; monthOffset--) {
       const targetDate = new Date(now.getFullYear(), now.getMonth() - monthOffset, 1);
@@ -384,22 +401,22 @@ export default function FriendsHub() {
       const month = targetDate.getMonth();
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      
+
       const monthCal = {
         label: targetDate.toLocaleDateString("en-US", { month: "long", year: "numeric" }),
         days: []
       };
-      
+
       const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
       dayNames.forEach(name => {
         monthCal.days.push({ type: "header", label: name });
       });
-      
+
       // Empty cells before month starts
       for (let i = 0; i < firstDay; i++) {
         monthCal.days.push({ type: "empty" });
       }
-      
+
       // Days of month
       for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -407,10 +424,10 @@ export default function FriendsHub() {
         const isToday = dateStr === new Date().toISOString().slice(0, 10);
         monthCal.days.push({ type: "day", day, hasActivity, isToday });
       }
-      
+
       calendars.push(monthCal);
     }
-    
+
     return calendars;
   };
 
@@ -418,18 +435,23 @@ export default function FriendsHub() {
 
   return (
     <div style={styles.pageWrap}>
-      <StickerField 
-        count={18} 
-        stickers={["🍎","🥗","🍳","🍓","🍪","🥛","🍌","💪","🥕","🍞","🍇","🥑","🍊","🥦","🍉","🥚","🍑","🥨"]} 
-        seed={999} 
+      <StickerField
+        count={18}
+        stickers={["🍎", "🥗", "🍳", "🍓", "🍪", "🥛", "🍌", "💪", "🥕", "🍞", "🍇", "🥑", "🍊", "🥦", "🍉", "🥚", "🍑", "🥨"]}
+        seed={999}
       />
 
       <div style={styles.centerOuter}>
         {/* Header */}
         <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>Friends Hub</h1>
-            <div style={styles.subtitle}>Connect, compare and chat</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button style={styles.homeButton} onClick={() => navigate("/")}>
+              ← Home
+            </button>
+            <div>
+              <h1 style={styles.title}>Friends Hub</h1>
+              <div style={styles.subtitle}>Connect, compare and chat</div>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <button style={styles.button} onClick={shareInvite}>
@@ -472,15 +494,15 @@ export default function FriendsHub() {
                       background: cell.type === "header"
                         ? "transparent"
                         : cell.type === "empty"
-                        ? "transparent"
-                        : cell.hasActivity
-                        ? "#bddfa3"
-                        : "#f1f5f9",
+                          ? "transparent"
+                          : cell.hasActivity
+                            ? "#bddfa3"
+                            : "#f1f5f9",
                       color: cell.type === "header"
                         ? "#9ca3af"
                         : cell.hasActivity
-                        ? "#3f5c2c"
-                        : "#cbd5e1",
+                          ? "#3f5c2c"
+                          : "#cbd5e1",
                       fontWeight: cell.isToday ? "700" : cell.type === "header" ? "600" : "500",
                       border: cell.isToday ? "2px solid #bca987" : "none",
                       boxShadow: cell.hasActivity && cell.type === "day" ? "0 2px 8px rgba(189,223,163,0.3)" : "none",
@@ -615,7 +637,7 @@ export default function FriendsHub() {
           <div style={styles.modal} onClick={() => setShowAddModal(false)}>
             <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
               <h2 style={{ marginTop: 0, color: '#5c4f3f' }}>Add Friend</h2>
-              
+
               <div style={{ marginBottom: '24px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#4b4033' }}>
                   Friend's User ID
