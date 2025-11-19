@@ -1,4 +1,3 @@
-// src/FriendsHub.jsx
 import React, { useEffect, useState } from "react";
 import { useAuth } from "./context/AuthContext";
 import StickerField from "./StickerField";
@@ -21,188 +20,211 @@ import {
   sendGroupMessage,
 } from "./firebaseHelpers";
 import "./App.css";
-
-// Firebase storage helpers
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
-/* ---------- Inline styles for drawers / sheet (no extra lib) ---------- */
+/* ---------- Styles ---------- */
 const styles = {
-  shell: { maxWidth: 1152, margin: "0 auto", padding: 16 },
-  stickyTop: {
-    position: "sticky",
-    top: 0,
-    zIndex: 10,
-    paddingBottom: 10,
-    marginBottom: 10,
-    background: "linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.65))",
-    backdropFilter: "blur(6px)",
-    borderBottom: "1px solid rgba(0,0,0,.06)",
+  container: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    padding: "16px",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   },
-  stories: {
-    display: "flex",
-    gap: 12,
-    overflowX: "auto",
-    padding: "10px 2px 4px 2px",
-    alignItems: "center",
-  },
-  storyBtn: { appearance: "none", border: "none", background: "transparent", cursor: "pointer", padding: 0, textAlign: "center" },
-  ring: (active, size = 66, gradient = null) => ({
-    width: size,
-    height: size,
-    borderRadius: 999,
-    padding: 4,
-    display: "grid",
-    placeItems: "center",
-    boxShadow: "0 8px 20px rgba(0,0,0,.08)",
-    background: gradient
-      ? gradient
-      : active
-      ? "conic-gradient(#ff8a65,#ffb86b,#ff8a65)"
-      : "conic-gradient(#e6e4ea,#f3f4fb,#e6e4ea)",
-  }),
-  avatar: (size = 58) => ({
-    width: size - 12,
-    height: size - 12,
-    borderRadius: 999,
-    background: "#fff",
-    display: "grid",
-    placeItems: "center",
-    fontWeight: 800,
-    fontSize: Math.round(size / 3.6),
-    color: "#111",
-  }),
   card: {
-    background: "rgba(247,242,239,.88)",
-    border: "1px solid #e9e4df",
-    borderRadius: 16,
-    boxShadow: "0 20px 60px rgba(0,0,0,.10)",
-    padding: 14,
+    background: "white",
+    borderRadius: "16px",
+    padding: "20px",
+    marginBottom: "16px",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
   },
-  h3: { margin: 0, fontWeight: 800 },
-  subtle: { color: "#6b7280" },
-
-  // Drawers & sheet
-  drawerBase: (side) => ({
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "24px",
+    flexWrap: "wrap",
+    gap: "12px",
+  },
+  title: {
+    fontSize: "28px",
+    fontWeight: "800",
+    color: "white",
+    margin: 0,
+  },
+  button: {
+    background: "white",
+    border: "none",
+    borderRadius: "12px",
+    padding: "10px 20px",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "14px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    transition: "transform 0.2s",
+  },
+  primaryButton: {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "white",
+    border: "none",
+    borderRadius: "12px",
+    padding: "12px 24px",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "14px",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+  },
+  input: {
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: "12px",
+    border: "1px solid #e2e8f0",
+    fontSize: "14px",
+    marginBottom: "12px",
+    boxSizing: "border-box",
+  },
+  modal: {
     position: "fixed",
     top: 0,
-    bottom: 0,
-    width: "88vw",
-    maxWidth: 420,
-    [side]: 0,
-    transform: `translateX(${side === "left" ? "-105%" : "105%"})`,
-    transition: "transform .28s ease",
-    background: "rgba(247,242,239,.98)",
-    border: "1px solid #e9e4df",
-    boxShadow: side === "left" ? "12px 0 40px rgba(0,0,0,.14)" : "-12px 0 40px rgba(0,0,0,.14)",
-    zIndex: 40,
-    display: "flex",
-    flexDirection: "column",
-  }),
-  drawerOpen: { transform: "translateX(0%)" },
-  sheetBase: {
-    position: "fixed",
     left: 0,
     right: 0,
     bottom: 0,
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    background: "rgba(247,242,239,.98)",
-    border: "1px solid #e9e4df",
-    boxShadow: "0 -16px 40px rgba(0,0,0,.14)",
-    transform: "translateY(105%)",
-    transition: "transform .28s ease",
-    zIndex: 50,
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+    padding: "16px",
   },
-  sheetOpen: { transform: "translateY(0%)" },
-  scrim: { position: "fixed", inset: 0, background: "rgba(0,0,0,.25)", zIndex: 30 },
-  fabWrap: { position: "fixed", right: 16, bottom: 16, display: "grid", gap: 10, zIndex: 45 },
-  fab: { background: "#111", color: "#fff", padding: "12px 14px", borderRadius: 999, border: "none", fontWeight: 800, boxShadow: "0 10px 28px rgba(0,0,0,.2)", cursor: "pointer" },
+  modalContent: {
+    background: "white",
+    borderRadius: "20px",
+    padding: "24px",
+    maxWidth: "500px",
+    width: "100%",
+    maxHeight: "90vh",
+    overflow: "auto",
+  },
+  calendar: {
+    display: "grid",
+    gridTemplateColumns: "repeat(7, 1fr)",
+    gap: "4px",
+    marginTop: "12px",
+  },
+  calendarDay: {
+    aspectRatio: "1",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "4px",
+    fontSize: "12px",
+    fontWeight: "500",
+  },
+  friendCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "12px",
+    borderRadius: "12px",
+    background: "#f8fafc",
+    marginBottom: "8px",
+    cursor: "pointer",
+    transition: "background 0.2s",
+  },
+  avatar: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    fontSize: "18px",
+  },
+  badge: {
+    background: "#10b981",
+    color: "white",
+    padding: "4px 12px",
+    borderRadius: "12px",
+    fontSize: "12px",
+    fontWeight: "600",
+  },
+  tabContainer: {
+    display: "flex",
+    gap: "8px",
+    marginBottom: "16px",
+    overflowX: "auto",
+  },
+  tab: {
+    padding: "8px 16px",
+    borderRadius: "12px",
+    border: "none",
+    background: "#f1f5f9",
+    cursor: "pointer",
+    fontWeight: "600",
+    fontSize: "14px",
+    whiteSpace: "nowrap",
+  },
+  activeTab: {
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "white",
+  },
 };
 
-/* ---------- Small atoms ---------- */
-const Pill = ({ children }) => (
-  <span style={{ background: "#effaf2", color: "#0f6a1a", padding: "4px 8px", borderRadius: 999, fontWeight: 700, fontSize: 12 }}>
-    {children}
-  </span>
-);
-
-/* ---------- Main ---------- */
 export default function FriendsHub() {
   const { user } = useAuth();
   const uid = user?.uid;
 
-  // data
+  // Data
   const [requests, setRequests] = useState([]);
   const [friends, setFriends] = useState([]);
   const [communities, setCommunities] = useState([]);
-
-  // selection
+  const [userActivityDays, setUserActivityDays] = useState([]);
+  
+  // UI State
+  const [activeTab, setActiveTab] = useState("friends");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showStreakModal, setShowStreakModal] = useState(false);
+  const [showChatModal, setShowChatModal] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [activeGroup, setActiveGroup] = useState(null);
-
-  // today feed + chat
-  const [friendFeed, setFriendFeed] = useState([]);
-  const [threadId, setThreadId] = useState(null);
+  
+  // Form inputs
+  const [friendUidInput, setFriendUidInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [msgText, setMsgText] = useState("");
-  const [groupMessages, setGroupMessages] = useState([]);
-  const [groupText, setGroupText] = useState("");
+  const [threadId, setThreadId] = useState(null);
 
-  // ui chrome
-  const [openLeft, setOpenLeft] = useState(false); // Friends/Requests/Communities
-  const [openRight, setOpenRight] = useState(false); // Chat drawer
-  const [openSheet, setOpenSheet] = useState(false); // Add Friend sheet
-  const [snapView, setSnapView] = useState(false); // Snap-style stories toggle
-
-  // add friend form
-  const [friendUidInput, setFriendUidInput] = useState("");
-  const [groupName, setGroupName] = useState("");
-  const [selectedMembers, setSelectedMembers] = useState([]);
-
-  // upload state
-  const [uploading, setUploading] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState(null);
-
-  /* BG */
-  const GradientBG = () => (
-    <>
-      <div
-        style={{
-          position: "fixed",
-          inset: "-10vh -10vw -10vh -10vw",
-          zIndex: -2,
-          background: `
-          radial-gradient(1200px 800px at 10% -5%, #fdebd2, transparent),
-          radial-gradient(1200px 800px at 90% 110%, #fdebd2, transparent),
-          linear-gradient(180deg, #fff7da, #fff)
-        `,
-        }}
-      />
-      <StickerField className="fh-stickers" count={14} stickers={["🍎", "🥗", "🍳", "🍓", "🍪", "🥛", "🍌", "💪", "🥕", "🍞"]} seed={999} />
-    </>
-  );
-
-  /* Prefill ?add= */
-  useEffect(() => {
-    try {
-      const p = new URLSearchParams(window.location.search);
-      const add = p.get("add");
-      if (add && !friendUidInput) {
-        setFriendUidInput(add);
-        setOpenSheet(true);
-      }
-    } catch {}
-    // eslint-disable-next-line
-  }, []);
-
-  /* Load lists + enrich */
+  // Load user's activity days for streak calendar
   useEffect(() => {
     if (!uid) return;
     (async () => {
       try {
-        const [reqs, fs, groups] = await Promise.all([listIncomingRequests(uid), listFriends(uid), listMyCommunities(uid)]);
+        const logs = await getFriendActivityWindow(uid, 365); // Last year
+        const days = new Set();
+        logs.forEach(log => {
+          const date = log.date || (log.timestamp && new Date(log.timestamp).toISOString().slice(0, 10));
+          if (date) days.add(date);
+        });
+        setUserActivityDays(Array.from(days).sort());
+      } catch (e) {
+        console.error("Failed to load activity", e);
+      }
+    })();
+  }, [uid]);
+
+  // Load friends and requests
+  useEffect(() => {
+    if (!uid) return;
+    (async () => {
+      try {
+        const [reqs, fs] = await Promise.all([
+          listIncomingRequests(uid),
+          listFriends(uid),
+        ]);
+        
         const enriched = await Promise.all(
           fs.map(async (f) => {
             const logs = await getFriendActivityWindow(f.uid, 60);
@@ -212,529 +234,447 @@ export default function FriendsHub() {
             return {
               ...f,
               streak,
-              lastTitle: last.title,
-              lastDate: last.date,
-              lastCalories: last.calories,
               activeToday: last.date === today,
               initials: (f.displayName?.slice(0, 2) || f.uid.slice(0, 2)).toUpperCase(),
             };
           })
         );
+        
         setRequests(reqs || []);
         setFriends(enriched || []);
-        setCommunities(groups || []);
-        if (!selectedFriend && enriched?.[0]) setSelectedFriend(enriched[0]);
       } catch (e) {
-        console.error("FriendsHub load failed", e);
+        console.error("Failed to load data", e);
       }
     })();
-  }, [uid]); // eslint-disable-line
+  }, [uid]);
 
-  /* Selecting a friend -> load TODAY feed + spin up DM thread */
-  useEffect(() => {
-    if (!selectedFriend || !uid) return;
-    let mounted = true;
-    (async () => {
-      try {
-        const rows = await getFriendLogsToday(selectedFriend.uid);
-        if (mounted) setFriendFeed(rows.filter((l) => (l.category || "meal") === "meal"));
-      } catch (e) {
-        console.error("[Friend feed read failed]", e);
-      }
-      try {
-        const tid = await ensureDMThread(uid, selectedFriend.uid);
-        if (mounted) setThreadId(tid);
-      } catch (e) {
-        console.error("[DM thread setup failed]", e);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [selectedFriend, uid]);
-
-  /* Watch chats */
+  // Watch chat messages
   useEffect(() => {
     if (!threadId) return;
-    const un = watchThreadMessages(threadId, setMessages);
-    return () => un && un();
+    const unsubscribe = watchThreadMessages(threadId, setMessages);
+    return () => unsubscribe && unsubscribe();
   }, [threadId]);
 
+  // Prefill friend UID from URL
   useEffect(() => {
-    if (!activeGroup) return;
-    const un = watchGroupMessages(activeGroup, setGroupMessages);
-    return () => un && un();
-  }, [activeGroup]);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const addUid = params.get("add");
+      if (addUid && !friendUidInput) {
+        setFriendUidInput(addUid);
+        setShowAddModal(true);
+      }
+    } catch {}
+  }, []);
 
-  /* Actions */
+  // Actions
   const addFriend = async () => {
     if (!friendUidInput.trim() || !uid) return;
     try {
       await sendFriendRequest(uid, friendUidInput.trim());
       setFriendUidInput("");
-      alert("Request sent");
-      setOpenSheet(false);
+      alert("Friend request sent!");
+      setShowAddModal(false);
     } catch (e) {
       alert(e.message);
     }
   };
+
   const acceptReq = async (rid) => {
     await acceptFriendRequest(uid, rid);
-    setRequests((prev) => prev.filter((r) => r.id !== rid));
+    setRequests(prev => prev.filter(r => r.id !== rid));
   };
+
   const declineReq = async (rid) => {
     await declineFriendRequest(uid, rid);
-    setRequests((prev) => prev.filter((r) => r.id !== rid));
+    setRequests(prev => prev.filter(r => r.id !== rid));
   };
-  const toggleMember = (fuid) => setSelectedMembers((prev) => (prev.includes(fuid) ? prev.filter((x) => x !== fuid) : [...prev, fuid]));
-  const createGroup = async () => {
-    const id = await createCommunity(uid, groupName || "My Group", selectedMembers);
-    setGroupName("");
-    setSelectedMembers([]);
-    setActiveGroup(id);
-    setOpenLeft(false); // close drawer
+
+  const openChat = async (friend) => {
+    setSelectedFriend(friend);
+    try {
+      const tid = await ensureDMThread(uid, friend.uid);
+      setThreadId(tid);
+      setShowChatModal(true);
+    } catch (e) {
+      console.error("Failed to open chat", e);
+    }
   };
+
   const sendMsg = async () => {
     if (!threadId || !msgText.trim() || !uid) return;
     await sendThreadMessage(threadId, uid, msgText.trim());
     setMsgText("");
   };
-  const sendGroupMsg = async () => {
-    if (!activeGroup || !groupText.trim() || !uid) return;
-    await sendGroupMessage(activeGroup, uid, groupText.trim());
-    setGroupText("");
-  };
 
-  /* Feed grouping */
-  const groupedFeed = (() => {
-    const map = {};
-    for (const l of friendFeed) {
-      const d = l.date || (l.timestamp && new Date(l.timestamp).toISOString().slice(0, 10)) || "Unknown";
-      (map[d] = map[d] || []).push(l);
-    }
-    const keys = Object.keys(map).sort((a, b) => b.localeCompare(a));
-    return { map, keys };
-  })();
-  const prettyDate = (iso) => {
-    const today = new Date().toISOString().slice(0, 10);
-    const y = new Date();
-    y.setDate(y.getDate() - 1);
-    const yiso = y.toISOString().slice(0, 10);
-    if (iso === today) return "Today";
-    if (iso === yiso) return "Yesterday";
-    return iso;
-  };
-
-  /* Sharing made simple: copies invite link or uses native share */
   const shareInvite = async () => {
     const inviteUrl = `${window.location.origin}/app/friends?add=${encodeURIComponent(uid || "")}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Add me", text: "Add me on Food Analysis", url: inviteUrl });
-        return;
-      } catch (e) {
-        // fall back to clipboard
-      }
-    }
+    const shareData = {
+      title: "Join me on Food Analysis!",
+      text: `Hey! Track your meals with me on Food Analysis. Use my code: ${uid?.slice(0, 8)}`,
+      url: inviteUrl,
+    };
+
     try {
-      await navigator.clipboard.writeText(inviteUrl);
-      alert("Invite link copied!");
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(inviteUrl);
+        alert("Invite link copied to clipboard!");
+      }
     } catch (e) {
-      prompt("Copy this link:", inviteUrl);
+      console.error("Share failed", e);
     }
   };
 
-  /* Upload profile photo -> Firebase Storage + set photo URL in user's profile doc */
-  const onFileChosen = async (ev) => {
-    const file = ev.target.files?.[0];
-    if (!file || !uid) return;
-    try {
-      setUploading(true);
-      const storage = getStorage();
-      const ref = storageRef(storage, `users/${uid}/profile_photo_${Date.now()}.${file.name.split(".").pop()}`);
-      const snap = await uploadBytes(ref, file);
-      const url = await getDownloadURL(snap.ref);
-
-      // write photo URL into Firestore user's profile document (main)
-      try {
-        const profileRef = doc(db, "users", uid, "profile", "main");
-        await updateDoc(profileRef, { photoURL: url });
-      } catch (e) {
-        // if update fails, still keep the url locally
-        console.warn("Failed to write profile photo to Firestore:", e);
-      }
-
-      setPhotoUrl(url);
-      alert("Photo uploaded!");
-    } catch (e) {
-      console.error("Upload failed:", e);
-      alert("Upload failed");
-    } finally {
-      setUploading(false);
+  // Generate calendar for current month
+  const generateCalendar = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    const calendar = [];
+    const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+    
+    // Add day names
+    dayNames.forEach(name => {
+      calendar.push({ type: "header", label: name });
+    });
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < firstDay; i++) {
+      calendar.push({ type: "empty" });
     }
+    
+    // Add days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const hasActivity = userActivityDays.includes(dateStr);
+      const isToday = dateStr === new Date().toISOString().slice(0, 10);
+      calendar.push({ type: "day", day, hasActivity, isToday });
+    }
+    
+    return calendar;
   };
 
-  /* UI */
   return (
-    <>
-      <GradientBG />
-
-      {/* Sticky top: title + stories row */}
-      <div style={styles.stickyTop}>
-        <div style={styles.shell}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <h2 style={{ margin: 0, fontWeight: 900 }}>Friends</h2>
-              <div style={{ color: "#6b7280" }}>Connect, compare streaks and chat</div>
-            </div>
-
-            <div style={{ display: "flex", gap: 8 }}>
-              <button style={{ ...styles.fab, padding: "10px 12px" }} onClick={() => setOpenLeft(true)}>
-                ☰
-              </button>
-              <button style={{ ...styles.fab, padding: "10px 12px" }} onClick={() => setOpenRight(true)}>
-                💬
-              </button>
-              <button style={{ ...styles.fab, padding: "10px 12px" }} onClick={() => setOpenSheet(true)}>
-                ＋
-              </button>
-            </div>
-          </div>
-
-          {/* Stories (horizontal scroll). SnapView toggles to large rings */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <div style={{ fontWeight: 700 }}>Stories</div>
-              <div style={{ color: "#6b7280", fontSize: 13 }}>Quick view</div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                <input type="checkbox" checked={snapView} onChange={(e) => setSnapView(e.target.checked)} />
-                <span style={{ fontSize: 13, color: "#6b7280" }}>Snap view</span>
-              </label>
-            </div>
-          </div>
-
-          <div style={{ ...styles.stories, marginTop: 10 }}>
-            {friends.map((it) => (
-              <button
-                key={it.uid}
-                style={styles.storyBtn}
-                onClick={() => {
-                  setSelectedFriend(it);
-                  setActiveGroup(null);
-                }}
-                title={it.uid}
-              >
-                <div style={styles.ring(it.activeToday, snapView ? 94 : 66, snapView ? "conic-gradient(#ff8a65,#ffd7a8,#ff8a65)" : null)}>
-                  <div style={styles.avatar(snapView ? 86 : 58)}>{it.initials}</div>
-                </div>
-                <div style={{ marginTop: 8, fontSize: snapView ? 14 : 12, textAlign: "center" }}>
-                  <div style={{ fontWeight: 700 }}>{it.displayName ? it.displayName.split(" ")[0] : it.uid.slice(0, 8)}</div>
-                  <div style={{ fontSize: 12, color: "#6b7280" }}>🔥 {it.streak ?? 0}d</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Main: only TODAY feed (clean, uncluttered) */}
-      <div style={styles.shell}>
-        <div style={{ ...styles.card, padding: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-            <div>
-              <h3 style={styles.h3}>{selectedFriend ? `Today — ${selectedFriend.displayName || selectedFriend.uid.slice(0, 8)}` : "Today"}</h3>
-              <div style={styles.subtle}>
-                {selectedFriend ? `${selectedFriend.streak ?? 0} day(s) streak • ${selectedFriend.activeToday ? "active today" : "no activity today"}` : "Friends' latest meals"}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              {/* Profile photo uploader (this user) */}
-              <label style={{ display: "inline-flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                <div style={{ width: 44, height: 44, borderRadius: 999, overflow: "hidden", border: "1px solid #e9e4df", display: "grid", placeItems: "center" }}>
-                  {photoUrl ? <img src={photoUrl} alt="you" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ fontWeight: 800 }}>{(user?.email || "U").slice(0, 1).toUpperCase()}</div>}
-                </div>
-                <input type="file" accept="image/*" onChange={onFileChosen} style={{ display: "none" }} />
-              </label>
-
-              <button style={{ ...styles.fab, padding: "10px 12px" }} onClick={shareInvite}>
-                Share Invite
-              </button>
-            </div>
-          </div>
-
-          <div style={{ marginTop: 14 }}>
-            {friendFeed.length === 0 ? (
-              <div style={{ ...styles.subtle, marginTop: 8, textAlign: "center", padding: 22 }}>
-                No meals logged today.
-              </div>
-            ) : (
-              <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
-                {groupedFeed.keys.map((k) => (
-                  <div key={k}>
-                    <div style={{ fontWeight: 700, margin: "8px 0" }}>{prettyDate(k)}</div>
-                    <div style={{ display: "grid", gap: 8 }}>
-                      {(groupedFeed.map[k] || []).map((l) => (
-                        <div key={l.id} style={{ ...styles.card, padding: 12 }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <div style={{ fontWeight: 600 }}>{l.item || l.name || "Meal"}</div>
-                            <div style={{ opacity: 0.7 }}>{Math.round(l.calories ?? l.macros?.calories_kcal ?? 0)} kcal</div>
-                          </div>
-                          {l.macros && (
-                            <div style={{ ...styles.subtle, fontSize: 12, marginTop: 6 }}>
-                              P{l.macros.protein_g ?? "—"} • C{l.macros.total_carbohydrate_g ?? l.macros?.carbs_g ?? "—"} • F{l.macros.total_fat_g ?? "—"}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Floating buttons for mobile (duplicate of header buttons for reachability) */}
-      <div style={styles.fabWrap}>
-        <button style={styles.fab} onClick={() => setOpenLeft(true)}>
-          ☰
-        </button>
-        <button style={styles.fab} onClick={() => setOpenRight(true)}>
-          💬
-        </button>
-        <button style={styles.fab} onClick={() => setOpenSheet(true)}>
-          ＋
-        </button>
-      </div>
-
-      {/* SCRIM */}
-      {(openLeft || openRight || openSheet) && <div style={styles.scrim} onClick={() => { setOpenLeft(false); setOpenRight(false); setOpenSheet(false); }} />}
-
-      {/* LEFT DRAWER: Friends / Requests / Communities */}
-      <div style={{ ...styles.drawerBase("left"), ...(openLeft ? styles.drawerOpen : {}) }}>
-        <div style={{ padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <strong>People & Groups</strong>
-          <button style={{ ...styles.fab, padding: "8px 10px" }} onClick={() => setOpenLeft(false)}>
-            ✕
+    <div style={styles.container}>
+      {/* Header */}
+      <div style={styles.header}>
+        <h1 style={styles.title}>🍽️ Friends</h1>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <button style={styles.button} onClick={() => setShowStreakModal(true)}>
+            📅 My Streak
+          </button>
+          <button style={styles.button} onClick={shareInvite}>
+            📤 Share
+          </button>
+          <button style={styles.primaryButton} onClick={() => setShowAddModal(true)}>
+            + Add Friend
           </button>
         </div>
+      </div>
 
-        <div style={{ padding: 14, overflow: "auto" }}>
-          {/* requests */}
-          <div style={{ ...styles.card, padding: 12, marginBottom: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={styles.h3}>Requests</h3>
-              <span style={styles.subtle}>{requests.length}</span>
-            </div>
+      {/* Tabs */}
+      <div style={styles.tabContainer}>
+        <button
+          style={{ ...styles.tab, ...(activeTab === "friends" ? styles.activeTab : {}) }}
+          onClick={() => setActiveTab("friends")}
+        >
+          Friends ({friends.length})
+        </button>
+        <button
+          style={{ ...styles.tab, ...(activeTab === "requests" ? styles.activeTab : {}) }}
+          onClick={() => setActiveTab("requests")}
+        >
+          Requests ({requests.length})
+        </button>
+      </div>
+
+      {/* Content */}
+      <div style={styles.card}>
+        {activeTab === "friends" && (
+          <>
+            {friends.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+                <div style={{ fontSize: "48px", marginBottom: "16px" }}>👥</div>
+                <p>No friends yet. Add your first friend to get started!</p>
+                <button style={styles.primaryButton} onClick={() => setShowAddModal(true)}>
+                  Add Friend
+                </button>
+              </div>
+            ) : (
+              friends.map(friend => (
+                <div
+                  key={friend.uid}
+                  style={styles.friendCard}
+                  onClick={() => openChat(friend)}
+                >
+                  <div style={styles.avatar}>{friend.initials}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: "600", marginBottom: "4px" }}>
+                      {friend.displayName || friend.uid.slice(0, 8)}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#64748b" }}>
+                      🔥 {friend.streak || 0} day streak
+                      {friend.activeToday && " • Active today"}
+                    </div>
+                  </div>
+                  <button
+                    style={{ ...styles.button, padding: "8px 16px" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openChat(friend);
+                    }}
+                  >
+                    💬
+                  </button>
+                </div>
+              ))
+            )}
+          </>
+        )}
+
+        {activeTab === "requests" && (
+          <>
             {requests.length === 0 ? (
-              <div style={styles.subtle}>No pending requests.</div>
+              <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+                <div style={{ fontSize: "48px", marginBottom: "16px" }}>📬</div>
+                <p>No pending requests</p>
+              </div>
             ) : (
-              <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
-                {requests.map((r) => (
-                  <div key={r.id} style={{ ...styles.card, padding: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <strong>{(r.fromUid || "").slice(0, 8)}…</strong>
-                      </div>
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <button style={styles.fab} onClick={() => acceptReq(r.id)}>
-                          Accept
-                        </button>
-                        <button style={styles.fab} onClick={() => declineReq(r.id)}>
-                          Decline
-                        </button>
-                      </div>
+              requests.map(req => (
+                <div key={req.id} style={styles.friendCard}>
+                  <div style={styles.avatar}>
+                    {(req.fromUid || "?").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: "600" }}>
+                      {req.fromUid?.slice(0, 12)}...
+                    </div>
+                    <div style={{ fontSize: "12px", color: "#64748b" }}>
+                      Wants to connect
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button
+                      style={{ ...styles.primaryButton, padding: "8px 16px" }}
+                      onClick={() => acceptReq(req.id)}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      style={{ ...styles.button, padding: "8px 16px" }}
+                      onClick={() => declineReq(req.id)}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
-          </div>
-
-          {/* friends */}
-          <div style={{ ...styles.card, padding: 12, marginBottom: 12 }}>
-            <h3 style={styles.h3}>Friends</h3>
-            <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
-              {friends.map((f) => (
-                <button
-                  key={f.uid}
-                  onClick={() => {
-                    setSelectedFriend(f);
-                    setActiveGroup(null);
-                    setOpenLeft(false);
-                  }}
-                  style={{
-                    ...styles.card,
-                    padding: 10,
-                    textAlign: "left",
-                    cursor: "pointer",
-                    border: selectedFriend?.uid === f.uid ? "2px solid #a5b4fc" : "1px solid #e9e4df",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 999, display: "grid", placeItems: "center", background: "#f3f4f6", fontWeight: 700, fontSize: 12 }}>
-                      {f.initials}
-                    </div>
-                    <strong>{f.displayName || f.uid.slice(0, 8)}</strong>
-                  </div>
-                  <Pill>🔥 {f.streak ?? 0}d</Pill>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* communities */}
-          <div style={{ ...styles.card, padding: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={styles.h3}>Communities</h3>
-              <button style={styles.fab} onClick={() => createGroup()}>
-                ＋
-              </button>
-            </div>
-            <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
-              {communities.map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => {
-                    setActiveGroup(g.id);
-                    setSelectedFriend(null);
-                    setOpenLeft(false);
-                    setOpenRight(true);
-                  }}
-                  style={{ ...styles.card, padding: 10, textAlign: "left", cursor: "pointer" }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <strong>{g.name}</strong>
-                    <span style={{ ...styles.subtle, fontSize: 12 }}>{(g.members || []).length} members</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* quick create UI */}
-            <div style={{ marginTop: 10 }}>
-              <input placeholder="New group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #e9e4df" }} />
-              <div style={{ ...styles.subtle, marginTop: 6 }}>Pick members:</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
-                {friends.map((f) => (
-                  <label key={f.uid} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <input type="checkbox" checked={selectedMembers.includes(f.uid)} onChange={() => toggleMember(f.uid)} />
-                    <span>{f.displayName || f.uid.slice(0, 8)}</span>
-                  </label>
-                ))}
-              </div>
-              <button style={{ ...styles.fab, marginTop: 8 }} onClick={createGroup}>
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
-      {/* RIGHT DRAWER: Chat (DM or Group) */}
-      <div style={{ ...styles.drawerBase("right"), ...(openRight ? styles.drawerOpen : {}) }}>
-        <div style={{ padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <strong>{activeGroup ? "Community Chat" : "Direct Messages"}</strong>
-          <button style={{ ...styles.fab, padding: "8px 10px" }} onClick={() => setOpenRight(false)}>
-            ✕
-          </button>
-        </div>
+      {/* Add Friend Modal */}
+      {showAddModal && (
+        <div style={styles.modal} onClick={() => setShowAddModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ marginTop: 0 }}>Add Friend</h2>
+            
+            <div style={{ marginBottom: "24px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "600" }}>
+                Friend's User ID
+              </label>
+              <input
+                style={styles.input}
+                value={friendUidInput}
+                onChange={(e) => setFriendUidInput(e.target.value)}
+                placeholder="Paste their user ID here"
+              />
+              <button style={styles.primaryButton} onClick={addFriend}>
+                Send Friend Request
+              </button>
+            </div>
 
-        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 12, height: "100%" }}>
-          <div style={{ ...styles.card, padding: 12, flex: "1 1 auto", overflow: "auto" }}>
-            {activeGroup
-              ? groupMessages.map((m) => (
-                  <div key={m.id} style={{ marginBottom: 8 }}>
-                    <div style={{ ...styles.subtle, fontSize: 12 }}>{m.fromUid.slice(0, 8)}…</div>
-                    <div style={{ display: "inline-block", background: "#f3f4f6", borderRadius: 14, padding: "6px 10px" }}>{m.text}</div>
+            <div style={{ padding: "16px", background: "#f8fafc", borderRadius: "12px" }}>
+              <div style={{ fontWeight: "600", marginBottom: "8px" }}>Your User ID</div>
+              <code style={{
+                background: "white",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                display: "block",
+                fontSize: "12px",
+                wordBreak: "break-all",
+              }}>
+                {uid}
+              </code>
+              <button
+                style={{ ...styles.button, marginTop: "12px", width: "100%" }}
+                onClick={async () => {
+                  await navigator.clipboard.writeText(uid || "");
+                  alert("ID copied!");
+                }}
+              >
+                Copy My ID
+              </button>
+            </div>
+
+            <button
+              style={{ ...styles.button, marginTop: "16px", width: "100%" }}
+              onClick={() => setShowAddModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Streak Calendar Modal */}
+      {showStreakModal && (
+        <div style={styles.modal} onClick={() => setShowStreakModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ marginTop: 0 }}>📅 Your Activity Streak</h2>
+            
+            <div style={{ marginBottom: "16px" }}>
+              <div style={styles.badge}>
+                🔥 {userActivityDays.length} days logged this year
+              </div>
+            </div>
+
+            <div style={{ marginBottom: "8px", fontWeight: "600" }}>
+              {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            </div>
+
+            <div style={styles.calendar}>
+              {generateCalendar().map((cell, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    ...styles.calendarDay,
+                    background: cell.type === "header"
+                      ? "transparent"
+                      : cell.type === "empty"
+                      ? "transparent"
+                      : cell.hasActivity
+                      ? "#10b981"
+                      : "#f1f5f9",
+                    color: cell.type === "header"
+                      ? "#64748b"
+                      : cell.hasActivity
+                      ? "white"
+                      : "#94a3b8",
+                    fontWeight: cell.isToday ? "700" : "500",
+                    border: cell.isToday ? "2px solid #667eea" : "none",
+                  }}
+                >
+                  {cell.type === "header" ? cell.label : cell.type === "day" ? cell.day : ""}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: "16px", padding: "12px", background: "#f8fafc", borderRadius: "12px", fontSize: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                <div style={{ width: "16px", height: "16px", background: "#10b981", borderRadius: "4px" }}></div>
+                <span>Days with logged meals</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "16px", height: "16px", background: "#f1f5f9", borderRadius: "4px" }}></div>
+                <span>No activity</span>
+              </div>
+            </div>
+
+            <button
+              style={{ ...styles.button, marginTop: "16px", width: "100%" }}
+              onClick={() => setShowStreakModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Modal */}
+      {showChatModal && selectedFriend && (
+        <div style={styles.modal} onClick={() => setShowChatModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+              <div style={styles.avatar}>{selectedFriend.initials}</div>
+              <div>
+                <h2 style={{ margin: 0 }}>
+                  {selectedFriend.displayName || selectedFriend.uid.slice(0, 8)}
+                </h2>
+                <div style={{ fontSize: "14px", color: "#64748b" }}>
+                  🔥 {selectedFriend.streak || 0} day streak
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              height: "300px",
+              overflowY: "auto",
+              padding: "16px",
+              background: "#f8fafc",
+              borderRadius: "12px",
+              marginBottom: "16px",
+            }}>
+              {messages.length === 0 ? (
+                <div style={{ textAlign: "center", color: "#64748b", padding: "40px 20px" }}>
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>💬</div>
+                  <div>No messages yet. Say hi!</div>
+                </div>
+              ) : (
+                messages.map(msg => (
+                  <div
+                    key={msg.id}
+                    style={{
+                      marginBottom: "12px",
+                      display: "flex",
+                      justifyContent: msg.fromUid === uid ? "flex-end" : "flex-start",
+                    }}
+                  >
+                    <div style={{
+                      background: msg.fromUid === uid
+                        ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                        : "white",
+                      color: msg.fromUid === uid ? "white" : "#1e293b",
+                      padding: "8px 12px",
+                      borderRadius: "12px",
+                      maxWidth: "70%",
+                      wordBreak: "break-word",
+                    }}>
+                      {msg.text}
+                    </div>
                   </div>
                 ))
-              : messages.map((m) => (
-                  <div key={m.id} style={{ marginBottom: 8, textAlign: m.fromUid === uid ? "right" : "left" }}>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        background: m.fromUid === uid ? "#111" : "#f3f4f6",
-                        color: m.fromUid === uid ? "#fff" : "#111",
-                        borderRadius: 14,
-                        padding: "6px 10px",
-                      }}
-                    >
-                      {m.text}
-                    </span>
-                  </div>
-                ))}
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input value={activeGroup ? groupText : msgText} onChange={(e) => (activeGroup ? setGroupText(e.target.value) : setMsgText(e.target.value))} placeholder="Write a message" style={{ flex: 1, padding: "10px 12px", borderRadius: 12, border: "1px solid #e9e4df" }} onKeyDown={(e) => { if (e.key === "Enter") { activeGroup ? sendGroupMsg() : sendMsg(); } }} />
-            <button style={styles.fab} onClick={activeGroup ? sendGroupMsg : sendMsg}>
-              Send
-            </button>
-          </div>
-        </div>
-      </div>
+              )}
+            </div>
 
-      {/* BOTTOM SHEET: Add friend + share */}
-      <div style={{ ...styles.sheetBase, ...(openSheet ? styles.sheetOpen : {}) }}>
-        <div style={{ padding: 14 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <strong>Add a Friend</strong>
-            <button style={{ ...styles.fab, padding: "8px 10px" }} onClick={() => setOpenSheet(false)}>
-              ✕
-            </button>
-          </div>
-
-          <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
-            <div style={styles.subtle}>Share your ID or paste theirs:</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input value={friendUidInput} onChange={(e) => setFriendUidInput(e.target.value)} placeholder="Enter friend's UID" style={{ flex: 1, padding: "10px 12px", borderRadius: 12, border: "1px solid #e9e4df" }} />
-              <button style={styles.fab} onClick={addFriend}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                style={{ ...styles.input, marginBottom: 0 }}
+                value={msgText}
+                onChange={(e) => setMsgText(e.target.value)}
+                placeholder="Type a message..."
+                onKeyDown={(e) => e.key === "Enter" && sendMsg()}
+              />
+              <button style={styles.primaryButton} onClick={sendMsg}>
                 Send
               </button>
             </div>
 
-            {/* Share my own ID + invite link */}
-            <div style={{ ...styles.card, padding: 12 }}>
-              <div style={styles.subtle}>Your ID</div>
-              <code style={{ background: "#f3f4f6", padding: "4px 8px", borderRadius: 8, display: "inline-block" }}>{uid}</code>
-              <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <button
-                  style={styles.fab}
-                  onClick={async () => {
-                    const inviteUrl = `${window.location.origin}/app/friends?add=${encodeURIComponent(uid || "")}`;
-                    if (navigator.share) {
-                      try {
-                        await navigator.share({ title: "Add me", text: "Add me on Food Analysis", url: inviteUrl });
-                      } catch {}
-                    } else {
-                      await navigator.clipboard.writeText(inviteUrl);
-                      alert("Invite link copied!");
-                    }
-                  }}
-                >
-                  Share Invite
-                </button>
-                <button
-                  style={styles.fab}
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(uid || "");
-                    alert("ID copied!");
-                  }}
-                >
-                  Copy ID
-                </button>
-              </div>
-            </div>
+            <button
+              style={{ ...styles.button, marginTop: "16px", width: "100%" }}
+              onClick={() => setShowChatModal(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }
