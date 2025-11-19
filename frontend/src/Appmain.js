@@ -122,7 +122,7 @@ function MainApp() {
     formData.append("file", file);
     setLoading(true);
     try {
-      const data = await handleFetchJson("http://127.0.0.1:8000/analyze/", { method: "POST", body: formData });
+      const data = await handleFetchJson("https://caloreat.onrender.com/analyze/", { method: "POST", body: formData });
       console.log("CSV analyze:", data);
       setReport(data);
       setMapped(null);
@@ -145,7 +145,7 @@ function MainApp() {
     setLoading(true);
     try {
       const data = await handleFetchJson(
-        "http://127.0.0.1:8000/analyze_image_with_micronutrients/?include_low_confidence=true",
+        "https://caloreat.onrender.com/analyze_image_with_micronutrients/?include_low_confidence=true",
         { method: "POST", body: formData }
       );
       console.log("analyze_image_with_micronutrients response:", data);
@@ -224,7 +224,7 @@ function MainApp() {
     };
     setLoading(true);
     try {
-      const data = await handleFetchJson("http://127.0.0.1:8000/run_nutrients/", {
+      const data = await handleFetchJson("https://caloreat.onrender.com/run_nutrients/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -147,7 +147,7 @@ export async function deleteAllLogsForDate(uid, dateIso) {
  * Backend integrations (port 8000)
  * ------------------------------*/
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://caloreat.onrender.com";
 
 /**
  * Run nutrient analysis for items: [{ name, quantity, portion_mult?, manual_calories? }, ...]

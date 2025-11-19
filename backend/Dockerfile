@@ -22,6 +22,10 @@ COPY . .
 # Expose port and cmd
 ENV PORT=8000
 EXPOSE 8000
+<<<<<<< HEAD
 CMD python run.py
   # and run.py handles PORT via os.getenv
+=======
+CMD ["python", "run.py"]  # and run.py handles PORT via os.getenv
+>>>>>>> 14d08a3 (Update Dockerfile, run.py and frontend API configs for Render deployment)
 

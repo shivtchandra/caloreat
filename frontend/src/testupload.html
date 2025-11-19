@@ -13,7 +13,7 @@ document.getElementById('f').addEventListener('change', async (e) => {
   const fd = new FormData();
   fd.append('file', e.target.files[0]);
   try {
-    const r = await fetch('http://127.0.0.1:8000/analyze_image/', { method: 'POST', body: fd });
+    const r = await fetch('https://caloreat.onrender.com/analyze_image/', { method: 'POST', body: fd });
     console.log('status', r.status);
     console.log(await r.text());
   } catch (err) {

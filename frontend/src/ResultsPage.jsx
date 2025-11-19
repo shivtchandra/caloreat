@@ -133,7 +133,7 @@ export default function ResultsPage() {
         return;
       }
 
-      const aiRespRaw = await fetch("http://127.0.0.1:8000/restaurant/identify_ai", {
+      const aiRespRaw = await fetch("https://caloreat.onrender.com/restaurant/identify_ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ocr_text: ocrText })
@@ -142,7 +142,7 @@ export default function ResultsPage() {
       let placeResp = null;
       const candidateName = aiRespRaw?.restaurant || (Array.isArray(aiRespRaw?.restaurant_candidates) && aiRespRaw.restaurant_candidates[0]);
       if (candidateName) {
-        placeResp = await fetch(`http://127.0.0.1:8000/restaurant/get_restaurant_info?q=${encodeURIComponent(candidateName)}`)
+        placeResp = await fetch(`https://caloreat.onrender.com/restaurant/get_restaurant_info?q=${encodeURIComponent(candidateName)}`)
           .then((r) => r.json()).catch(() => null);
       }
 

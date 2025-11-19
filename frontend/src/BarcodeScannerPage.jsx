@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://caloreat.onrender.com";
 
 export default function BarcodeScannerPage({}) {
   const videoRef = useRef(null);

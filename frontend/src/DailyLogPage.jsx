@@ -549,7 +549,7 @@ function handleRemoveCustomPreset(preset) {
 
   // Backend analyze
   async function analyzeItemsBackend(confirmedItems = []) {
-    const ANALYZE_URL = "http://127.0.0.1:8000/api/run_nutrients";
+    const ANALYZE_URL = "https://caloreat.onrender.com/api/run_nutrients";
     if (!user?.uid) {
       console.warn("analyzeItemsBackend: no logged-in user found");
       return null;
@@ -660,7 +660,7 @@ function handleRemoveCustomPreset(preset) {
     const check = async () => {
       if (!active) return;
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/meta/version", { cache: "no-store" });
+        const res = await fetch("https://caloreat.onrender.com/api/meta/version", { cache: "no-store" });
         const j = await res.json();
 
         if (prevVersion === null) {
@@ -766,7 +766,7 @@ function handleRemoveCustomPreset(preset) {
         manual_calories: m.manual_calories ?? m.calories ?? undefined,
       }));
 
-      const response = await fetch("http://127.0.0.1:8000/api/run_nutrients", {
+      const response = await fetch("https://caloreat.onrender.com/api/run_nutrients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items }),
@@ -840,7 +840,7 @@ function handleRemoveCustomPreset(preset) {
   // Poll helper
   async function pollForSummary(userId, dateIso, { interval = 1500, maxAttempts = 20 } = {}) {
     const statusUrl = (u, d) =>
-      `http://127.0.0.1:8000/api/summarizeDaily/status?user_id=${encodeURIComponent(u)}&date=${encodeURIComponent(d)}`;
+      `https://caloreat.onrender.com/api/summarizeDaily/status?user_id=${encodeURIComponent(u)}&date=${encodeURIComponent(d)}`;
     let attempt = 0;
     while (attempt < maxAttempts) {
       attempt += 1;
@@ -877,7 +877,7 @@ function handleRemoveCustomPreset(preset) {
       const needsAnalysis = meals.some(m => !m.calories && (!m.macros || Object.keys(m.macros || {}).length === 0));
       if (needsAnalysis) await handleAnalyzeToday();
 
-      const startRes = await fetch("http://127.0.0.1:8000/api/summarizeDaily", {
+      const startRes = await fetch("https://caloreat.onrender.com/api/summarizeDaily", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: user.uid, date: today, logs: meals, force_refresh: true }),

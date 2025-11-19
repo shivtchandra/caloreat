@@ -708,7 +708,7 @@ function MainApp() {
       };
 
       // Start summary
-      await fetch("http://127.0.0.1:8000/api/summarizeDaily", {
+      await fetch("https://caloreat.onrender.com/api/summarizeDaily", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -721,7 +721,7 @@ function MainApp() {
 
       // Poll status once (your backend completes almost immediately)
       const res = await fetch(
-        `http://127.0.0.1:8000/api/summarizeDaily/status?user_id=${encodeURIComponent(
+        `https://caloreat.onrender.com/api/summarizeDaily/status?user_id=${encodeURIComponent(
           uid
         )}&date=${encodeURIComponent(date)}`
       );
@@ -873,7 +873,7 @@ function MainApp() {
     };
     setLoading(true);
     try {
-      const data = await handleFetchJson("http://127.0.0.1:8000/api/run_nutrients", {
+      const data = await handleFetchJson("https://caloreat.onrender.com/api/run_nutrients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

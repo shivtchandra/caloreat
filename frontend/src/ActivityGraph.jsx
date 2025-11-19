@@ -119,7 +119,7 @@ function extractMacros(macros) {
 /* Poll helper (unchanged) */
 async function pollForSummary(userId, dateIso, { interval = 1500, maxAttempts = 20 } = {}) {
   const statusUrl = (u, d) =>
-    `http://127.0.0.1:8000/api/summarizeDaily/status?user_id=${encodeURIComponent(u)}&date=${encodeURIComponent(d)}`;
+    `https://caloreat.onrender.com/api/summarizeDaily/status?user_id=${encodeURIComponent(u)}&date=${encodeURIComponent(d)}`;
   let attempt = 0;
   while (attempt < maxAttempts) {
     attempt += 1;
@@ -356,7 +356,7 @@ export default function ActivityGraph() {
 
       const profile = await loadUserProfile(uid);
 
-      const startRes = await fetch("http://127.0.0.1:8000/api/summarizeDaily", {
+      const startRes = await fetch("https://caloreat.onrender.com/api/summarizeDaily", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: uid, date: today, logs: formattedLogs, profile }),
@@ -564,7 +564,7 @@ export default function ActivityGraph() {
         </div>
 
         {/* Macro / summary column (collapses under chart on mobile) */}
-        <div style={{ background: "#fff", borderRadius: cardRadius, padding: 14, boxShadow: "0 6px 20px rgba(0,0,0,0.04)" }}>
+        {/* <div style={{ background: "#fff", borderRadius: cardRadius, padding: 14, boxShadow: "0 6px 20px rgba(0,0,0,0.04)" }}>
           <h3 style={{ marginTop: 0, marginBottom: 12 }}>Macro Distribution</h3>
           <div style={{ display: "flex", gap: 12, alignItems: "center", flexDirection: isMobile ? "row" : "column", justifyContent: "center" }}>
             <div style={{ width: isMobile ? 140 : 160, height: isMobile ? 140 : 160 }}>
@@ -591,7 +591,7 @@ export default function ActivityGraph() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* AI Summary */}
