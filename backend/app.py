@@ -590,6 +590,55 @@ def enhance_with_llm(system_prompt: str, user_prompt: str, evidence_db: list = N
     log.warning("No LLM produced output; returning None (use base summary).")
     return None
 
+def analyze_food_llm(items: List[str]) -> Dict[str, Any]:
+    """
+    Analyze a list of food items using LLM to get nutritional info.
+    Returns a dict: { "item_name": { "calories_kcal": ..., "protein_g": ... } }
+    """
+    if not items: return {}
+    
+    system_prompt = (
+        "You are a nutritional database. Output ONLY valid JSON. "
+        "For each food item provided, estimate the nutrition for a standard serving (or the specified quantity if given). "
+        "Return a JSON object where keys are the exact item names provided, and values are objects containing: "
+        "calories_kcal, protein_g, total_carbohydrate_g, total_fat_g, fiber_g, sugar_g, sodium_mg. "
+        "If unsure, provide a best estimate based on standard ingredients."
+    )
+    user_prompt = f"Analyze these items: {json.dumps(items)}"
+
+    # Reuse enhance_with_llm logic but for JSON
+    # GROQ first
+    try:
+        api_key = os.getenv("GROQ_API_KEY", "").strip()
+        if api_key and Groq is not None:
+            client = Groq(api_key=api_key)
+            resp = client.chat.completions.create(
+                model="llama3-70b-8192",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.1,
+            )
+            out = resp.choices[0].message.content
+            return json.loads(out)
+    except Exception as e:
+        log.warning("GROQ analysis failed: %s", e)
+
+    # Gemini fallback
+    try:
+        gkey = os.getenv("GEMINI_API_KEY", "").strip()
+        if gkey and genai is not None:
+            genai.configure(api_key=gkey)
+            model = genai.GenerativeModel("gemini-2.5-flash", generation_config={"response_mime_type": "application/json"})
+            resp = model.generate_content(system_prompt + "\n" + user_prompt)
+            return json.loads(resp.text)
+    except Exception as e:
+        log.warning("Gemini analysis failed: %s", e)
+
+    return {}
+
 # ---------- Summary job store ----------
 _summary_jobs: Dict[tuple, Dict[str, Any]] = {}
 
@@ -658,6 +707,7 @@ def search_local(q: str):
 def run_nutrients(payload: Dict[str, Any] = Body(...)):
     totals, results = {}, []
     items = payload.get("items", []) or []
+    llm_queue = []
     for i, it in enumerate(items):
         name = (it.get("name") or "").strip()
         qty = float(it.get("quantity", 1))
@@ -666,7 +716,7 @@ def run_nutrients(payload: Dict[str, Any] = Body(...)):
         if not name: continue
 
         local = _closest_local_food(name) or biryani_pulao_fallback(name)
-        if local:
+        if local and local.get("score", 0) > 80:
             base = local["nutrients"]
             scaled = {k: float(v) * mult for k, v in base.items() if _is_number(v)}
             for k, v in scaled.items(): totals[k] = totals.get(k, 0) + v
@@ -676,24 +726,50 @@ def run_nutrients(payload: Dict[str, Any] = Body(...)):
                 "provenance": {"source":"local_match","score":local.get("score")}
             })
         else:
-            base = 350
-            low = name.lower()
-            if "salad" in low: base = 220
-            elif "biryani" in low: base = 420
-            elif "pizza" in low: base = 700
-            elif "paneer" in low: base = 450
-            est = {
-                "calories_kcal": base * mult,
-                "protein_g": (base * 0.12 / 4) * mult,
-                "total_carbohydrate_g": (base * 0.45 / 4) * mult,
-                "total_fat_g": (base * 0.43 / 9) * mult
-            }
-            for k, v in est.items(): totals[k] = totals.get(k, 0) + v
+            # Queue for LLM analysis
+            llm_queue.append((i, name, mult, qty))
+
+    # Process LLM queue
+    if llm_queue:
+        names_to_analyze = [x[1] for x in llm_queue]
+        log.info("Analyzing with LLM: %s", names_to_analyze)
+        llm_results = analyze_food_llm(names_to_analyze)
+        
+        for (idx, name, mult, qty) in llm_queue:
+            # Try to find exact match or fuzzy match in results
+            res = llm_results.get(name)
+            
+            # Fallback to heuristics if LLM failed for this item
+            if not res:
+                base = 350
+                low = name.lower()
+                if "salad" in low: base = 220
+                elif "biryani" in low: base = 420
+                elif "pizza" in low: base = 700
+                elif "paneer" in low: base = 450
+                est = {
+                    "calories_kcal": base,
+                    "protein_g": base * 0.12 / 4,
+                    "total_carbohydrate_g": base * 0.45 / 4,
+                    "total_fat_g": base * 0.43 / 9
+                }
+                res = est
+                prov = {"source":"heuristic_fallback"}
+            else:
+                prov = {"source":"llm_analysis"}
+
+            # Scale results
+            scaled = {k: float(v) * mult for k, v in res.items() if _is_number(v)}
+            for k, v in scaled.items(): totals[k] = totals.get(k, 0) + v
+            
             results.append({
-                "id": f"item-{i}", "item": name, "macros": est,
-                "calories": est["calories_kcal"], "quantity": qty,
-                "provenance": {"source":"heuristic"}
+                "id": f"item-{idx}", "item": name, "macros": scaled,
+                "calories": scaled.get("calories_kcal"), "quantity": qty,
+                "provenance": prov
             })
+
+    # Sort results back to original order
+    results.sort(key=lambda x: int(x["id"].split("-")[1]))
 
     macros = {
         "total_calories": round(totals.get("calories_kcal", 0), 1),

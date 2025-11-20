@@ -169,16 +169,16 @@ export default function ProfilePage() {
         setName(user.displayName || "");
         setEmail(user.email || "");
       }
-  
+
       const get = (k) => localStorage.getItem(k) ?? "";
-  
+
       // Only repopulate if the user saved at least once
       const hasSaved = get("profile_saved_v1") === "1";
       if (hasSaved) {
         setMobile(get("profile_mobile"));
         setLocation(get("profile_location"));
         setAge(get("profile_age"));
-  
+
         // 🔑 read either old or canonical key
         setGender(get("profile_gender") || get("profile_sex"));
         setHeight(get("profile_height") || get("profile_height_cm"));
@@ -186,23 +186,34 @@ export default function ProfilePage() {
         setActivity(get("profile_activity") || get("profile_activity_level"));
         setDiet(get("profile_diet"));
         setGoal(get("profile_goal"));
-  
+
         setWaterTarget(get("profile_waterTarget"));
         setStepTarget(get("profile_stepTarget"));
         setSleepTarget(get("profile_sleepTarget"));
       }
-  
+
       setLoading(false);
     });
-  
+
     return () => unsub && unsub();
   }, [auth]);
-  
+
+  // 📱 Fix: Inject viewport meta tag if missing (to ensure mobile responsiveness)
+  useEffect(() => {
+    let meta = document.querySelector("meta[name='viewport']");
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "viewport";
+      meta.content = "width=device-width, initial-scale=1";
+      document.head.appendChild(meta);
+    }
+  }, []);
+
 
   /* ---------- Save ---------- */
   const handleSave = (e) => {
     e.preventDefault();
-  
+
     // Canonical keys the app uses elsewhere
     localStorage.setItem("profile_sex", gender || "");
     localStorage.setItem("profile_age", age || "");
@@ -211,7 +222,7 @@ export default function ProfilePage() {
     localStorage.setItem("profile_activity_level", activity || "");
     localStorage.setItem("profile_goal", goal || "");
     localStorage.setItem("profile_location", location || "");
-  
+
     // Keep your existing keys too (so this page can re-populate)
     localStorage.setItem("profile_name", name || "");
     localStorage.setItem("profile_email", email || "");
@@ -221,16 +232,16 @@ export default function ProfilePage() {
     localStorage.setItem("profile_weight", weight || "");
     localStorage.setItem("profile_activity", activity || "");
     localStorage.setItem("profile_diet", diet || "");
-  
+
     localStorage.setItem("profile_waterTarget", waterTarget || "");
     localStorage.setItem("profile_stepTarget", stepTarget || "");
     localStorage.setItem("profile_sleepTarget", sleepTarget || "");
-  
+
     localStorage.setItem("profile_saved_v1", "1");
-  
+
     alert("Profile saved successfully ✅");
   };
-  
+
   const handleLogout = async () => {
     try {
       await signOut(auth);

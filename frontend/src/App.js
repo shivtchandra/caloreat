@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform, AnimatePresence } from "framer-motion";
 
 import StickerField from "./StickerField.jsx";
 import run from "./assets/stickers/run.png";
@@ -49,10 +49,10 @@ function Badge({ category, label }) {
     category === "high"
       ? { background: "#dff8e6", color: "#12621a" }
       : category === "moderate"
-      ? { background: "#fff4d0", color: "#7a5a00" }
-      : category === "low"
-      ? { background: "#ffecec", color: "#7a231f" }
-      : { background: "#eee", color: "#333" };
+        ? { background: "#fff4d0", color: "#7a5a00" }
+        : category === "low"
+          ? { background: "#ffecec", color: "#7a231f" }
+          : { background: "#eee", color: "#333" };
   return <span style={{ ...base, ...style }}>{label}</span>;
 }
 
@@ -156,10 +156,13 @@ function CardImage({ src, alt = "" }) {
   return <img src={s} alt={alt} style={glass.img} onError={() => setS(FALLBACK)} />;
 }
 
-function GlassCard({ src, footerLeft, footerRight, style }) {
+function GlassCard({ src, footerLeft, footerRight, style, delay = 0 }) {
   const [hover, setHover] = React.useState(false);
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay, ease: "easeOut" }}
       style={{ ...glass.card, ...(hover ? glass.cardHover : {}), ...style }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -171,13 +174,13 @@ function GlassCard({ src, footerLeft, footerRight, style }) {
         <div style={glass.leftCol}>{footerLeft}</div>
         {footerRight}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 async function doShare(text, url) {
-  try { if (navigator.share) { await navigator.share({ title: "Food Analysis", text, url }); return; } } catch {}
-  try { await navigator.clipboard.writeText(`${text}${url ? `\n${url}` : ""}`); } catch {}
+  try { if (navigator.share) { await navigator.share({ title: "Food Analysis", text, url }); return; } } catch { }
+  try { await navigator.clipboard.writeText(`${text}${url ? `\n${url}` : ""}`); } catch { }
   alert("Share text copied!");
 }
 
@@ -207,10 +210,10 @@ const extractMealMacros = (macros) => {
   const carbs =
     Number(
       macros.total_carbohydrate_g ??
-        macros.total_carbs ??
-        macros.carbs_g ??
-        macros.carbs ??
-        0
+      macros.total_carbs ??
+      macros.carbs_g ??
+      macros.carbs ??
+      0
     ) || 0;
   const fats = Number(macros.total_fat_g ?? macros.total_fat ?? macros.fats ?? 0) || 0;
   const calories = Number(macros.calories_kcal ?? macros.calories ?? macros.total_calories ?? 0) || 0;
@@ -275,18 +278,30 @@ const dateKey = (ts) =>
 /* ------------------ Presentational subcomponents ------------------ */
 function Navbar() {
   return (
-    <header className="header" style={{ marginBottom: 36 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <h1 style={{ fontWeight: 700, fontSize: 20, margin: 0 }}>Food Analysis</h1>
-        <span style={{ color: "#6b7280", fontSize: 14 }}>— AI-powered meal analysis</span>
+    <header className="header" style={{ marginBottom: 36, display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <h1 style={{ fontWeight: 700, fontSize: 20, margin: 0 }}>Food Analysis</h1>
+          <span style={{ color: "#6b7280", fontSize: 14, display: "none", sm: { display: "inline" } }}>— AI-powered meal analysis</span>
+        </div>
       </div>
 
       {/* ONLY Metrics + Profile in top nav */}
-      <nav style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <Link to="/app/metricspage" className="nav-link">About metrics</Link>
-        <Link to="/app/profile" className="nav-link">Profile</Link>
-        <Link to="/app/friends" className="nav-link">Friends</Link>
-
+      <nav style={{
+        display: "flex",
+        gap: 10,
+        alignItems: "center",
+        overflowX: "auto",
+        paddingBottom: 4,
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+        whiteSpace: "nowrap",
+        WebkitOverflowScrolling: "touch",
+      }}>
+        <style>{`nav::-webkit-scrollbar { display: none; }`}</style>
+        <Link to="/app/metricspage" className="nav-link" style={{ flexShrink: 0 }}>About metrics</Link>
+        <Link to="/app/profile" className="nav-link" style={{ flexShrink: 0 }}>Profile</Link>
+        <Link to="/app/friends" className="nav-link" style={{ flexShrink: 0 }}>Friends</Link>
       </nav>
     </header>
   );
@@ -333,29 +348,29 @@ function StackedBlastCards() {
   }, []);
 
   const maxRight = compact ? Math.min(90, spread * 0.45) : spread;
-  const maxLeft  = compact ? -Math.min(90, spread * 0.45) : -spread;
+  const maxLeft = compact ? -Math.min(90, spread * 0.45) : -spread;
 
   // Phased reveal:
   // Card 0 stays centered; Card 1 reveals right; Card 2 reveals left (both start under Card 0)
- // center stays put
-const x0 = useTransform(prog, [0, 1], [0, 0]);
+  // center stays put
+  const x0 = useTransform(prog, [0, 1], [0, 0]);
 
-// BOTH side cards start at the same time (0.30)
-const x1 = useTransform(prog, [0.00, 0.30, 1.00], [0, 0,  maxRight]); // right
-const x2 = useTransform(prog, [0.00, 0.30, 1.00], [0, 0,  maxLeft]);  // left
+  // BOTH side cards start at the same time (0.30)
+  const x1 = useTransform(prog, [0.00, 0.30, 1.00], [0, 0, maxRight]); // right
+  const x2 = useTransform(prog, [0.00, 0.30, 1.00], [0, 0, maxLeft]);  // left
 
-// fade in together
-const op1 = useTransform(prog, [0.00, 0.30, 0.45, 1.00], [0, 0, 1, 1]);
-const op2 = useTransform(prog, [0.00, 0.30, 0.45, 1.00], [0, 0, 1, 1]);
+  // fade in together
+  const op1 = useTransform(prog, [0.00, 0.30, 0.45, 1.00], [0, 0, 1, 1]);
+  const op2 = useTransform(prog, [0.00, 0.30, 0.45, 1.00], [0, 0, 1, 1]);
 
-// unstack together
-const y0 = useTransform(prog, [0, 1], [0, 0]);
-const y1 = useTransform(prog, [0.00, 0.30, 1.00], [12, 0, 0]);
-const y2 = useTransform(prog, [0.00, 0.30, 1.00], [24, 0, 0]);
+  // unstack together
+  const y0 = useTransform(prog, [0, 1], [0, 0]);
+  const y1 = useTransform(prog, [0.00, 0.30, 1.00], [12, 0, 0]);
+  const y2 = useTransform(prog, [0.00, 0.30, 1.00], [24, 0, 0]);
 
-// rotate together
-const r1 = useTransform(prog, [0.30, 1.00], [0, compact ? 2 : 3]);
-const r2 = useTransform(prog, [0.30, 1.00], [0, compact ? -2 : -3]);
+  // rotate together
+  const r1 = useTransform(prog, [0.30, 1.00], [0, compact ? 2 : 3]);
+  const r2 = useTransform(prog, [0.30, 1.00], [0, compact ? -2 : -3]);
 
   const cardStyle = {
     position: "relative",
@@ -468,9 +483,9 @@ const r2 = useTransform(prog, [0.30, 1.00], [0, compact ? -2 : -3]);
 }
 
 // ---- profile completeness helpers ----
-const REQUIRED_PROFILE_KEYS = ["sex","age","height_cm","weight_kg","activity_level","goal"];
+const REQUIRED_PROFILE_KEYS = ["sex", "age", "height_cm", "weight_kg", "activity_level", "goal"];
 
-const isProfileComplete = (p={}) =>
+const isProfileComplete = (p = {}) =>
   REQUIRED_PROFILE_KEYS.every(k => p[k] !== undefined && p[k] !== null && String(p[k]).toString().trim() !== "");
 
 const prettyGoal = (g) => {
@@ -532,7 +547,7 @@ function MainApp() {
   const profileDone = isProfileComplete(profile || {});
   const bmrVal = profileStats?.bmr ?? goals?.bmr ?? null;
   const tdeeVal = profileStats?.tdee ?? goals?.tdee ?? null;
-  
+
 
   // ---------- manual add ----------
   const addManualItem = () => {
@@ -883,7 +898,7 @@ function MainApp() {
 
       try {
         sessionStorage.setItem("food_results", JSON.stringify({ final: data, confirmed }));
-      } catch (_) {}
+      } catch (_) { }
 
       navigate("/app/results");
     } catch (err) {
@@ -902,20 +917,20 @@ function MainApp() {
   // 🆕 derived values for the small cards (fall back to local goals if server hasn't returned yet)
   const activeTargets = profileStats
     ? {
-        calories: profileStats.calorie_target,
-        protein_g: profileStats.protein_target_g,
-        carbs_g: profileStats.carb_target_g,
-        fats_g: profileStats.fat_target_g, // <-- fixed typo (was profile_stats)
-      }
+      calories: profileStats.calorie_target,
+      protein_g: profileStats.protein_target_g,
+      carbs_g: profileStats.carb_target_g,
+      fats_g: profileStats.fat_target_g, // <-- fixed typo (was profile_stats)
+    }
     : goals?.macro_goals || { calories: 0, protein_g: 0, carbs_g: 0, fats_g: 0 };
 
   const displayTotals = dayStats
     ? {
-        calories: Math.round(dayStats.calories || 0),
-        protein: Math.round(dayStats.protein_g || 0),
-        carbs: Math.round(dayStats.carbs_g || 0),
-        fats: Math.round(dayStats.fats_g || 0),
-      }
+      calories: Math.round(dayStats.calories || 0),
+      protein: Math.round(dayStats.protein_g || 0),
+      carbs: Math.round(dayStats.carbs_g || 0),
+      fats: Math.round(dayStats.fats_g || 0),
+    }
     : todayTotals;
 
   const remaining = useMemo(() => {
@@ -941,7 +956,7 @@ function MainApp() {
       <Navbar />
 
       <main style={{ width: "100%", maxWidth: 1152, margin: "0 auto", padding: "18px" }}>
-      {/* <button
+        {/* <button
         className="btn-scan"
         style={{
           position: "fixed",
@@ -1001,142 +1016,148 @@ function MainApp() {
 
           {/* Daily Summary Stats */}
           {/* Daily Summary Stats — 3 per row on desktop, wraps on small screens */}
-{uid && (
-  <div
-    style={{
-      marginTop: 18,
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-      gap: 18,
-      alignItems: "stretch",
-    }}
-  >
-    {/* BMR / TDEE */}
-    <GlassCard
-      src={IMAGES.bmr}
-      footerLeft={
-        <>
-          <div style={glass.label}>BMR / TDEE</div>
-          <div style={glass.big}>
-            {bmrVal ? Math.round(bmrVal) : "—"} / {tdeeVal ? Math.round(tdeeVal) : "—"}
-          </div>
-          <div style={glass.sub}>kcal • Targets use your profile</div>
-        </>
-      }
-      footerRight={
-        <button
-          style={glass.btn}
-          onClick={() => {
-            const who = displayName || "a friend";
-            const msg = `Hey — checkout ${who}! BMR/TDEE: ${Math.round(bmrVal||0)}/${Math.round(tdeeVal||0)} kcal on Food Analysis. Join me to track & grow 💪`;
-            doShare(msg, window.location.origin);
-          }}
-        >
-          Share
-        </button>
-      }
-    />
+          {uid && (
+            <div
+              style={{
+                marginTop: 18,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: 18,
+                alignItems: "stretch",
+              }}
+            >
+              {/* BMR / TDEE */}
+              <GlassCard
+                src={IMAGES.bmr}
+                delay={0.1}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>BMR / TDEE</div>
+                    <div style={glass.big}>
+                      {bmrVal ? Math.round(bmrVal) : "—"} / {tdeeVal ? Math.round(tdeeVal) : "—"}
+                    </div>
+                    <div style={glass.sub}>kcal • Targets use your profile</div>
+                  </>
+                }
+                footerRight={
+                  <button
+                    style={glass.btn}
+                    onClick={() => {
+                      const who = displayName || "a friend";
+                      const msg = `Hey — checkout ${who}! BMR/TDEE: ${Math.round(bmrVal || 0)}/${Math.round(tdeeVal || 0)} kcal on Food Analysis. Join me to track & grow 💪`;
+                      doShare(msg, window.location.origin);
+                    }}
+                  >
+                    Share
+                  </button>
+                }
+              />
 
-    {/* Health Score */}
-    <GlassCard
-      src={IMAGES.score}
-      footerLeft={
-        <>
-          <div style={glass.label}>Health Score</div>
-          <div style={glass.big}>{persoLoading ? "—" : (healthScore ?? "—")}</div>
-          <div style={glass.sub}>Out of 100</div>
-        </>
-      }
-      footerRight={<div style={glass.chip}>auto-updates</div>}
-    />
+              {/* Health Score */}
+              <GlassCard
+                src={IMAGES.score}
+                delay={0.2}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>Health Score</div>
+                    <div style={glass.big}>{persoLoading ? "—" : (healthScore ?? "—")}</div>
+                    <div style={glass.sub}>Out of 100</div>
+                  </>
+                }
+                footerRight={<div style={glass.chip}>auto-updates</div>}
+              />
 
-    {/* Calories */}
-    <GlassCard
-      src={IMAGES.calories}
-      footerLeft={
-        <>
-          <div style={glass.label}>Calories</div>
-          <div style={glass.big}>
-            {displayTotals.calories}/{activeTargets.calories}
-          </div>
-          <div style={glass.sub}>Remaining: {remaining.calories} kcal</div>
-        </>
-      }
-      footerRight={
-        <button
-          style={glass.btn}
-          onClick={async () => {
-            await navigator.clipboard.writeText(
-              `${displayTotals.calories}/${activeTargets.calories} kcal`
-            ).catch(()=>{});
-            alert("Copied calories to clipboard!");
-          }}
-        >
-          Copy
-        </button>
-      }
-    />
+              {/* Calories */}
+              <GlassCard
+                src={IMAGES.calories}
+                delay={0.3}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>Calories</div>
+                    <div style={glass.big}>
+                      {displayTotals.calories}/{activeTargets.calories}
+                    </div>
+                    <div style={glass.sub}>Remaining: {remaining.calories} kcal</div>
+                  </>
+                }
+                footerRight={
+                  <button
+                    style={glass.btn}
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(
+                        `${displayTotals.calories}/${activeTargets.calories} kcal`
+                      ).catch(() => { });
+                      alert("Copied calories to clipboard!");
+                    }}
+                  >
+                    Copy
+                  </button>
+                }
+              />
 
-    {/* Protein */}
-    <GlassCard
-      src={IMAGES.protein}
-      footerLeft={
-        <>
-          <div style={glass.label}>Protein</div>
-          <div style={glass.big}>
-            {displayTotals.protein}g/{activeTargets.protein_g}g
-          </div>
-          <div style={glass.sub}>
-            Left: {Math.max(0, (activeTargets.protein_g||0) - (displayTotals.protein||0))}g
-          </div>
-        </>
-      }
-      footerRight={
-        <button
-          style={glass.btn}
-          onClick={() => {
-            const who = displayName || "a friend";
-            const pct = activeTargets.protein_g ? Math.round((displayTotals.protein / activeTargets.protein_g) * 100) : 0;
-            const msg = `Hey — checkout ${who}, logged ${displayTotals.protein}/${activeTargets.protein_g}g protein today (${pct}%). Track & grow together!`;
-            doShare(msg, `${window.location.origin}/app`);
-          }}
-        >
-          Share
-        </button>
-      }
-    />
+              {/* Protein */}
+              <GlassCard
+                src={IMAGES.protein}
+                delay={0.4}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>Protein</div>
+                    <div style={glass.big}>
+                      {displayTotals.protein}g/{activeTargets.protein_g}g
+                    </div>
+                    <div style={glass.sub}>
+                      Left: {Math.max(0, (activeTargets.protein_g || 0) - (displayTotals.protein || 0))}g
+                    </div>
+                  </>
+                }
+                footerRight={
+                  <button
+                    style={glass.btn}
+                    onClick={() => {
+                      const who = displayName || "a friend";
+                      const pct = activeTargets.protein_g ? Math.round((displayTotals.protein / activeTargets.protein_g) * 100) : 0;
+                      const msg = `Hey — checkout ${who}, logged ${displayTotals.protein}/${activeTargets.protein_g}g protein today (${pct}%). Track & grow together!`;
+                      doShare(msg, `${window.location.origin}/app`);
+                    }}
+                  >
+                    Share
+                  </button>
+                }
+              />
 
-    {/* Carbs */}
-    <GlassCard
-      src={IMAGES.carbs}
-      footerLeft={
-        <>
-          <div style={glass.label}>Carbs</div>
-          <div style={glass.big}>
-            {displayTotals.carbs}g/{activeTargets.carbs_g}g
-          </div>
-          <div style={glass.sub}>Left: {remaining.carbs}g</div>
-        </>
-      }
-      footerRight={<div style={glass.chip}>smart target</div>}
-    />
+              {/* Carbs */}
+              <GlassCard
+                src={IMAGES.carbs}
+                delay={0.5}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>Carbs</div>
+                    <div style={glass.big}>
+                      {displayTotals.carbs}g/{activeTargets.carbs_g}g
+                    </div>
+                    <div style={glass.sub}>Left: {remaining.carbs}g</div>
+                  </>
+                }
+                footerRight={<div style={glass.chip}>smart target</div>}
+              />
 
-    {/* Fats */}
-    <GlassCard
-      src={IMAGES.fats}
-      footerLeft={
-        <>
-          <div style={glass.label}>Fats</div>
-          <div style={glass.big}>
-            {displayTotals.fats}g/{activeTargets.fats_g}g
-          </div>
-          <div style={glass.sub}>Left: {remaining.fats}g</div>
-        </>
-      }
-      footerRight={<div style={glass.chip}>balanced</div>}
-    />
-  </div>
-)}
+              {/* Fats */}
+              <GlassCard
+                src={IMAGES.fats}
+                delay={0.6}
+                footerLeft={
+                  <>
+                    <div style={glass.label}>Fats</div>
+                    <div style={glass.big}>
+                      {displayTotals.fats}g/{activeTargets.fats_g}g
+                    </div>
+                    <div style={glass.sub}>Left: {remaining.fats}g</div>
+                  </>
+                }
+                footerRight={<div style={glass.chip}>balanced</div>}
+              />
+            </div>
+          )}
 
         </section>
 
@@ -1147,7 +1168,21 @@ function MainApp() {
         {/* ------------------ NEW: Streaks & Friends area (inserted below stacked cards) ------------------ */}
         <section style={{ marginTop: 8 }}>
           {/* tabs bar (clickable) */}
-          <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+          <div style={{
+            display: "flex",
+            gap: 12,
+            alignItems: "center",
+            marginBottom: 12,
+            overflowX: "auto",
+            paddingBottom: 4, // space for scrollbar if visible
+            scrollbarWidth: "none", // hide scrollbar firefox
+            msOverflowStyle: "none", // hide scrollbar IE
+            whiteSpace: "nowrap",
+            WebkitOverflowScrolling: "touch",
+          }}>
+            <style>{`
+              div::-webkit-scrollbar { display: none; }
+            `}</style>
             <div
               onClick={() => setActiveTab("meals")}
               style={{

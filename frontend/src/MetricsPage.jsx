@@ -1,6 +1,6 @@
 // src/MetricsPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageTransition from "./components/PageTransition";
 
@@ -113,6 +113,7 @@ function KeyLine({ k, v, highlight }) {
 
 /** Main component */
 export default function MetricsPage() {
+  const navigate = useNavigate();
   const [active, setActive] = useState(SECTIONS[0].id);
 
   useEffect(() => {
@@ -160,8 +161,16 @@ export default function MetricsPage() {
       >
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           {/* Header */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 16 }}>
-            <div>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 16
+          }}>
+            <div style={{ flex: 1, minWidth: "280px" }}>
               <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#4b4033" }}>
                 Nutrition Metrics — How to read your numbers 🍽️
               </h1>
@@ -169,20 +178,25 @@ export default function MetricsPage() {
                 A practical guide to macros, micronutrients, %DV, and how we compute everything in your dashboard.
               </div>
             </div>
-            <Link to="/app" style={{ textDecoration: "none" }}>
-              <button
-                style={{
-                  padding: "10px 14px",
-                  borderRadius: 12,
-                  background: "#fffaf2",
-                  border: "1px solid #eadcc4",
-                  fontWeight: 600,
-                  color: "#4b4033",
-                }}
-              >
-                ← Back to app
-              </button>
-            </Link>
+            <button
+              onClick={() => navigate("/")}
+              style={{
+                border: "none",
+                borderRadius: 999,
+                padding: "8px 16px",
+                background: "#ffffff",
+                color: "#4b4033",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 8px 16px rgba(0,0,0,0.08)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap"
+              }}
+            >
+              ← Home
+            </button>
           </div>
 
           {/* Sticky section pills */}

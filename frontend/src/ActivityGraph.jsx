@@ -25,7 +25,7 @@ async function loadUserProfile(uid) {
   try {
     const d = await getDoc(doc(db, "profiles", uid));
     if (d.exists()) return d.data();
-  } catch {}
+  } catch { }
   // fallback
   return {
     sex: localStorage.getItem("profile_sex") || "male",
@@ -226,7 +226,7 @@ export default function ActivityGraph() {
       return;
     }
 
-    let unsub = () => {};
+    let unsub = () => { };
     (async () => {
       try {
         const initial = await getDailyLogs(uid).catch(() => []);
@@ -245,7 +245,7 @@ export default function ActivityGraph() {
     return () => {
       try {
         unsub();
-      } catch (e) {}
+      } catch (e) { }
     };
   }, [uid]);
 
@@ -335,7 +335,7 @@ export default function ActivityGraph() {
     const today = new Date().toISOString().slice(0, 10);
 
     const meals = logs.filter(l => {
-      const key = l.date || (l.timestamp ? new Date(l.timestamp).toISOString().slice(0,10) : "");
+      const key = l.date || (l.timestamp ? new Date(l.timestamp).toISOString().slice(0, 10) : "");
       return key === today && (l.category || "meal") === "meal";
     });
     if (meals.length === 0) return alert("No meals logged today.");
@@ -411,8 +411,37 @@ export default function ActivityGraph() {
         </div>
 
         <div style={{ display: 'flex', gap: 8, marginTop: isMobile ? 8 : 0 }}>
-          <button onClick={() => navigate("/")} style={{ border: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 14, cursor: 'pointer', background: "#eae4da", color: "#4b4033" }}>← Home</button>
-          <button onClick={() => navigate("/dailylog")} style={{ border: 'none', borderRadius: 10, padding: '8px 12px', fontSize: 14, cursor: 'pointer', background: "#eae4da", color: "#4b4033" }}>Daily Logs →</button>
+          <button
+            onClick={() => navigate("/")}
+            style={{
+              border: "none",
+              borderRadius: 999,
+              padding: "8px 16px",
+              background: "#ffffff",
+              color: "#4b4033",
+              fontWeight: 600,
+              cursor: "pointer",
+              boxShadow: "0 8px 16px rgba(0,0,0,0.08)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            ← Home
+          </button>
+          <button onClick={() => navigate("/dailylog")} style={{
+            border: "none",
+            borderRadius: 999,
+            padding: "8px 16px",
+            background: "#ffffff",
+            color: "#4b4033",
+            fontWeight: 600,
+            cursor: "pointer",
+            boxShadow: "0 8px 16px rgba(0,0,0,0.08)",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+          }}>Daily Logs →</button>
         </div>
       </div>
 
@@ -595,8 +624,8 @@ export default function ActivityGraph() {
       </div>
 
       {/* AI Summary */}
-            {/* AI Summary */}
-            <div style={{ marginBottom: sectionGap, background: "#fff", padding: 14, borderRadius: cardRadius, boxShadow: "0 6px 20px rgba(0,0,0,0.04)" }}>
+      {/* AI Summary */}
+      <div style={{ marginBottom: sectionGap, background: "#fff", padding: 14, borderRadius: cardRadius, boxShadow: "0 6px 20px rgba(0,0,0,0.04)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
           <div>
             <h2 style={{ fontSize: isMobile ? 16 : 20, fontWeight: 700, color: "#374151", margin: 0 }}>AI Daily Summary</h2>
@@ -653,26 +682,26 @@ export default function ActivityGraph() {
                 const t = summaryData.structured?.totals || {};
                 return (
                   <>
-                    <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:10 }}>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>BMR / TDEE</div>
-                      <div style={{ fontWeight:700 }}>{Math.round(p.bmr||0)} / {Math.round(p.tdee||0)} kcal</div>
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>BMR / TDEE</div>
+                      <div style={{ fontWeight: 700 }}>{Math.round(p.bmr || 0)} / {Math.round(p.tdee || 0)} kcal</div>
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:10 }}>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>Calories</div>
-                      <div style={{ fontWeight:700 }}>{Math.round(t.calories||0)} / {Math.round(p.calorie_target||0)} kcal</div>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>Gap: {(t.calories||0)-(p.calorie_target||0)} kcal</div>
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>Calories</div>
+                      <div style={{ fontWeight: 700 }}>{Math.round(t.calories || 0)} / {Math.round(p.calorie_target || 0)} kcal</div>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>Gap: {(t.calories || 0) - (p.calorie_target || 0)} kcal</div>
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:10 }}>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>Protein</div>
-                      <div style={{ fontWeight:700 }}>{Math.round(t.protein_g||0)}g / {Math.round(p.protein_target_g||0)}g</div>
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>Protein</div>
+                      <div style={{ fontWeight: 700 }}>{Math.round(t.protein_g || 0)}g / {Math.round(p.protein_target_g || 0)}g</div>
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:10 }}>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>Carbs</div>
-                      <div style={{ fontWeight:700 }}>{Math.round(t.carbs_g||0)}g / {Math.round(p.carb_target_g||0)}g</div>
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>Carbs</div>
+                      <div style={{ fontWeight: 700 }}>{Math.round(t.carbs_g || 0)}g / {Math.round(p.carb_target_g || 0)}g</div>
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:10 }}>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>Fats</div>
-                      <div style={{ fontWeight:700 }}>{Math.round(t.fats_g||0)}g / {Math.round(p.fat_target_g||0)}g</div>
+                    <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>Fats</div>
+                      <div style={{ fontWeight: 700 }}>{Math.round(t.fats_g || 0)}g / {Math.round(p.fat_target_g || 0)}g</div>
                     </div>
                   </>
                 );
@@ -682,12 +711,12 @@ export default function ActivityGraph() {
             {/* Top meals */}
             {!!summaryData.structured?.top_meals_by_cal?.length && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ fontWeight:700, marginBottom:8 }}>Top Meals by Calories</div>
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(220px,1fr))", gap:8 }}>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>Top Meals by Calories</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 8 }}>
                   {summaryData.structured.top_meals_by_cal.map((m, i) => (
-                    <div key={i} style={{ background:"#fff", border:"1px solid #eee", borderRadius:8, padding:8 }}>
-                      <div style={{ fontWeight:600 }}>{m.item}</div>
-                      <div style={{ fontSize:12, color:"#6b7280" }}>
+                    <div key={i} style={{ background: "#fff", border: "1px solid #eee", borderRadius: 8, padding: 8 }}>
+                      <div style={{ fontWeight: 600 }}>{m.item}</div>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>
                         {m.calories} kcal • P {m.protein_g ?? 0}g • C {m.carbs_g ?? 0}g • F {m.fats_g ?? 0}g
                       </div>
                     </div>
@@ -699,9 +728,9 @@ export default function ActivityGraph() {
             {/* Recommendations (safe access) */}
             {Array.isArray(summaryData.structured?.recommendations) && summaryData.structured.recommendations.length > 0 && (
               <div style={{ marginTop: 12 }}>
-                <div style={{ fontWeight:700, marginBottom:8 }}>Recommendations</div>
-                <ul style={{ margin:0, paddingLeft:18 }}>
-                  {summaryData.structured.recommendations.map((r, i) => <li key={i} style={{ marginBottom:6 }}>{r}</li>)}
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>Recommendations</div>
+                <ul style={{ margin: 0, paddingLeft: 18 }}>
+                  {summaryData.structured.recommendations.map((r, i) => <li key={i} style={{ marginBottom: 6 }}>{r}</li>)}
                 </ul>
               </div>
             )}
@@ -711,21 +740,21 @@ export default function ActivityGraph() {
               <div style={{ marginTop: 12, padding: 12, borderRadius: 8, background: "#ffffff", border: "1px solid #eee" }}>
                 <div style={{ fontWeight: 700, marginBottom: 8 }}>Coach Summary</div>
                 <div
-  style={{
-    background: "#faf9f7",
-    padding: 16,
-    borderRadius: 12,
-    border: "1px solid #eee",
-    marginTop: 12,
-    color: "#1f2937",
-    lineHeight: 1.55
-  }}
-  dangerouslySetInnerHTML={{
-    __html: DOMPurify.sanitize(
-      marked.parse(summaryData?.coachSummary ?? summaryData?.structured?.coach_summary ?? "")
-    )
-  }}
-></div>
+                  style={{
+                    background: "#faf9f7",
+                    padding: 16,
+                    borderRadius: 12,
+                    border: "1px solid #eee",
+                    marginTop: 12,
+                    color: "#1f2937",
+                    lineHeight: 1.55
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      marked.parse(summaryData?.coachSummary ?? summaryData?.structured?.coach_summary ?? "")
+                    )
+                  }}
+                ></div>
               </div>
             ) : null}
 

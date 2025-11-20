@@ -84,21 +84,6 @@ const styles = {
     boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
     transition: 'all 0.25s ease',
   },
-  homeButton: {
-    border: "1px solid rgba(255,255,255,0.4)",
-    borderRadius: "999px",
-    padding: "8px 16px",
-    background: "rgba(255,255,255,0.18)",
-    color: "white",
-    fontWeight: "600",
-    cursor: "pointer",
-    fontSize: "14px",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
-    backdropFilter: "blur(6px)",
-  },
   primaryButton: {
     background: '#bca987',
     color: 'white',
@@ -231,8 +216,8 @@ const styles = {
 };
 
 export default function FriendsHub() {
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const uid = user?.uid;
 
   // Data
@@ -444,8 +429,23 @@ export default function FriendsHub() {
       <div style={styles.centerOuter}>
         {/* Header */}
         <div style={styles.header}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button style={styles.homeButton} onClick={() => navigate("/")}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <button
+              onClick={() => navigate("/")}
+              style={{
+                border: "none",
+                borderRadius: 999,
+                padding: "8px 16px",
+                background: "#ffffff",
+                color: "#4b4033",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 8px 16px rgba(0,0,0,0.08)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
               ← Home
             </button>
             <div>

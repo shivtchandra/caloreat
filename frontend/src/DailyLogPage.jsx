@@ -11,8 +11,6 @@ import CardStackPage from "./CardStackPage.jsx";
 import AISummaryDisplay from "./AISummaryDisplay.jsx";
 import MealMacroBar from "./components/MealMacroBar";
 import { motion, AnimatePresence } from "framer-motion";
-
-// ✅ use your shared loader primitives
 import { LoaderOverlay, FruitFlipLoader } from "./components/loaders.jsx";
 
 export default function DailyLogPage() {
@@ -27,7 +25,7 @@ export default function DailyLogPage() {
   const [steps, setSteps] = useState("");
   const [sleepHours, setSleepHours] = useState("");
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(false); // only affects button text
+  const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [manualCalories, setManualCalories] = useState("");
   const [dailySummary, setDailySummary] = useState(null);
@@ -36,13 +34,11 @@ export default function DailyLogPage() {
 
   const logsContainerRef = useRef(null);
   const [visibleLogIds, setVisibleLogIds] = useState(new Set());
-
   const [dbRefreshing, setDbRefreshing] = useState(false);
 
-  // Global busy overlay + toast
   const [isBusy, setIsBusy] = useState(false);
   const [busyLabel, setBusyLabel] = useState("Working…");
-  const [toast, setToast] = useState(null); // { message, icon? }
+  const [toast, setToast] = useState(null);
   const hideToast = useCallback(() => setToast(null), []);
 
   const categories = [
@@ -52,7 +48,6 @@ export default function DailyLogPage() {
     { name: "Sleep", icon: Moon, bgColor: "#d6bdf0", hoverColor: "#c9a8e8", textColor: "#5c3f7f" }
   ];
 
-  /* ---------- Responsive hook & computed styles (inline) ---------- */
   function useWindowSize() {
     const [size, setSize] = useState({
       width: typeof window !== "undefined" ? window.innerWidth : 1200,
@@ -71,14 +66,12 @@ export default function DailyLogPage() {
   const isMobile = width < 768;
   const isSmall = width < 420;
 
-  // base spacing multipliers
   const spacing = useMemo(() => ({
-    pagePadding: isMobile ? 12 : 32,
-    cardPadding: isMobile ? 12 : 24,
-    gap: isMobile ? 10 : 16,
-  }), [isMobile]);
+    pagePadding: isSmall ? 8 : isMobile ? 12 : 32,
+    cardPadding: isSmall ? 14 : isMobile ? 16 : 24,
+    gap: isMobile ? 8 : 16,
+  }), [isMobile, isSmall]);
 
-  // computed styles used across many inline style objects
   const styles = useMemo(() => ({
     pageWrap: {
       minHeight: '100vh',
@@ -86,13 +79,14 @@ export default function DailyLogPage() {
       padding: `${spacing.pagePadding}px`,
       position: 'relative',
       overflow: 'hidden',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      paddingBottom: isMobile ? '2rem' : '3rem'
     },
     centerOuter: {
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
-      padding: isMobile ? '16px 10px' : '2rem 1rem',
+      padding: isSmall ? '12px 4px' : isMobile ? '16px 8px' : '2rem 1rem',
       boxSizing: 'border-box'
     },
     centerInner: {
@@ -104,111 +98,124 @@ export default function DailyLogPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: isMobile ? 12 : 24,
+      marginBottom: isSmall ? 10 : isMobile ? 12 : 24,
       position: 'relative',
       zIndex: 10,
-      gap: isMobile ? 8 : 16
+      gap: isSmall ? 6 : isMobile ? 8 : 16,
+      flexWrap: isMobile ? 'nowrap' : 'wrap'
     },
     titleCenter: {
       textAlign: 'center',
       flex: "1",
-      marginLeft: isMobile ? 12 : 24,
-      marginRight: isMobile ? 12 : 24
+      marginLeft: isSmall ? 4 : isMobile ? 8 : 24,
+      marginRight: isSmall ? 4 : isMobile ? 8 : 24,
+      minWidth: 0
     },
     titleText: {
-      fontSize: isMobile ? '1.25rem' : '2rem',
+      fontSize: isSmall ? '1.1rem' : isMobile ? '1.25rem' : '2rem',
       fontWeight: 'bold',
       color: '#5c4f3f',
-      marginBottom: '0.25rem'
+      marginBottom: '0.25rem',
+      lineHeight: 1.2
+    },
+    homeBtn: {
+      border: "none",
+      borderRadius: isSmall ? 8 : 999,
+      padding: isSmall ? "6px 10px" : isMobile ? "7px 12px" : "8px 16px",
+      background: "#ffffff",
+      color: "#4b4033",
+      fontWeight: 600,
+      fontSize: isSmall ? '0.8rem' : isMobile ? '0.85rem' : '1rem',
+      cursor: "pointer",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: isSmall ? 4 : 8,
+      whiteSpace: 'nowrap'
     },
     subtitle: {
-      fontSize: isMobile ? '0.775rem' : '0.875rem',
-      color: '#6b7280'
-    },
-    btnFloatingBase: {
-      border: 'none',
-      borderRadius: 10,
-      padding: isMobile ? '8px 12px' : '10px 18px',
-      fontSize: isMobile ? 14 : 15,
-      cursor: 'pointer',
-      transition: 'all 0.25s ease',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-      backgroundColor: '#eae4da',
-      color: '#4b4033'
+      fontSize: isSmall ? '0.7rem' : isMobile ? '0.775rem' : '0.875rem',
+      color: '#6b7280',
+      lineHeight: 1.3
     },
     glassCard: {
-      borderRadius: '1.5rem',
+      borderRadius: isSmall ? '1.2rem' : '1.5rem',
       padding: `${spacing.cardPadding}px`,
       width: '100%',
       boxSizing: 'border-box',
       background: 'rgba(255,255,255,0.95)',
       backdropFilter: 'blur(6px)',
       WebkitBackdropFilter: 'blur(6px)',
-      boxShadow: '0 10px 30px rgba(16,24,40,0.06)'
+      boxShadow: '0 8px 24px rgba(16,24,40,0.06)',
+      marginBottom: isMobile ? 16 : 24
     },
     quickAddOuter: {
-      margin: "0 0 12px 0",
-      padding: isMobile ? 12 : 14,
-      borderRadius: 16,
+      margin: `0 0 ${isMobile ? 10 : 12}px 0`,
+      padding: isSmall ? 10 : isMobile ? 12 : 14,
+      borderRadius: isSmall ? 12 : 16,
       background: "linear-gradient(180deg,#fffdf7 0%, #fff7e8 100%)",
       border: "1px solid #f5e6c8",
-      boxShadow: "0 8px 24px rgba(0,0,0,0.04)"
+      boxShadow: "0 4px 16px rgba(0,0,0,0.03)"
     },
     quickFoodsGrid: {
       display: 'grid',
-      gap: 10,
+      gap: isSmall ? 8 : 10,
       gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(auto-fit, minmax(140px, 1fr))',
     },
     quickFoodBtn: {
       textAlign: 'left',
       border: '1px solid #f0e4c9',
-      borderRadius: 14,
-      padding: isMobile ? 10 : 12,
+      borderRadius: isSmall ? 10 : 14,
+      padding: isSmall ? 8 : isMobile ? 10 : 12,
       cursor: 'pointer',
       background: '#ffffff',
-      boxShadow: '0 4px 14px rgba(0,0,0,0.05)',
+      boxShadow: '0 3px 10px rgba(0,0,0,0.04)',
       transition: 'transform 160ms ease, box-shadow 160ms ease',
+      width: '100%',
+      boxSizing: 'border-box'
     },
     dropZoneWide: {
-      margin: "10px auto 16px",
-      maxWidth: 720,
-      padding: "10px 12px",
+      margin: `${isMobile ? 8 : 10}px auto ${isMobile ? 12 : 16}px`,
+      maxWidth: isMobile ? '100%' : 720,
+      padding: isSmall ? "8px 10px" : "10px 12px",
       border: "1px dashed #e6d7bd",
       background: "#fffaf4",
-      borderRadius: 12,
+      borderRadius: isSmall ? 10 : 12,
       textAlign: "center",
       color: "#7a6a58",
-      fontSize: 13,
+      fontSize: isSmall ? 11 : 13,
+      boxSizing: 'border-box'
     },
     categoryGrid: {
       display: 'grid',
-      gap: 12,
+      gap: isSmall ? 8 : 12,
       gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(140px, 1fr))'
     },
     categoryBtn: (isSelected, cat) => ({
       position: 'relative',
       overflow: 'hidden',
-      borderRadius: '1rem',
-      padding: isMobile ? '0.75rem' : '1rem',
+      borderRadius: isSmall ? '0.75rem' : '1rem',
+      padding: isSmall ? '0.6rem' : isMobile ? '0.75rem' : '1rem',
       backgroundColor: isSelected ? cat.bgColor : '#f9fafb',
       border: 'none',
       cursor: 'pointer',
-      boxShadow: isSelected ? '0 8px 16px rgba(0,0,0,0.1)' : '0 2px 6px rgba(0,0,0,0.04)',
-      transform: isSelected ? 'scale(1.03)' : 'scale(1)',
-      transition: 'transform 180ms ease, box-shadow 180ms ease'
+      boxShadow: isSelected ? '0 6px 12px rgba(0,0,0,0.08)' : '0 2px 6px rgba(0,0,0,0.04)',
+      transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+      transition: 'transform 180ms ease, box-shadow 180ms ease',
+      boxSizing: 'border-box'
     }),
     formGridOne: {
       display: 'grid',
       gridTemplateColumns: '1fr',
-      gap: 12
+      gap: isSmall ? 10 : 12
     },
     inputBase: {
       width: '100%',
       backgroundColor: '#f9fafb',
       border: '1px solid #e0e0e0',
-      borderRadius: '0.75rem',
-      padding: isMobile ? '0.6rem 0.8rem' : '0.75rem 1rem',
-      fontSize: isMobile ? '0.9rem' : '0.875rem',
+      borderRadius: isSmall ? '0.6rem' : '0.75rem',
+      padding: isSmall ? '0.55rem 0.7rem' : isMobile ? '0.6rem 0.8rem' : '0.75rem 1rem',
+      fontSize: isSmall ? '0.85rem' : isMobile ? '0.9rem' : '0.875rem',
       color: '#374151',
       boxSizing: 'border-box'
     },
@@ -216,21 +223,21 @@ export default function DailyLogPage() {
       width: '100%',
       backgroundColor: '#f9fafb',
       border: '1px solid #e0e0e0',
-      borderRadius: '0.5rem',
-      padding: isMobile ? '0.4rem 0.6rem' : '0.5rem 0.75rem',
-      fontSize: isMobile ? '0.85rem' : '0.875rem',
+      borderRadius: isSmall ? '0.5rem' : '0.5rem',
+      padding: isSmall ? '0.4rem 0.55rem' : isMobile ? '0.4rem 0.6rem' : '0.5rem 0.75rem',
+      fontSize: isSmall ? '0.8rem' : isMobile ? '0.85rem' : '0.875rem',
       color: '#374151',
       boxSizing: 'border-box'
     },
     qtyControls: {
       display: 'flex',
       alignItems: 'center',
-      gap: '0.75rem'
+      gap: isSmall ? '0.5rem' : '0.75rem'
     },
     qtyBtn: {
-      width: isSmall ? '2.6rem' : '3rem',
-      height: isSmall ? '2.6rem' : '3rem',
-      borderRadius: '0.75rem',
+      width: isSmall ? '2.4rem' : '3rem',
+      height: isSmall ? '2.4rem' : '3rem',
+      borderRadius: isSmall ? '0.6rem' : '0.75rem',
       backgroundColor: '#f3f4f6',
       border: 'none',
       display: 'flex',
@@ -239,16 +246,18 @@ export default function DailyLogPage() {
       color: '#374151',
       fontWeight: 'bold',
       cursor: 'pointer',
-      fontSize: isSmall ? '1rem' : '1.25rem'
+      fontSize: isSmall ? '0.95rem' : '1.25rem',
+      flexShrink: 0
     },
     qtyInput: {
       flex: 1,
+      minWidth: 0,
       backgroundColor: "#f9fafb",
       border: "1px solid #e0e0e0",
-      borderRadius: "0.75rem",
-      padding: isMobile ? '0.55rem' : "0.75rem",
+      borderRadius: isSmall ? '0.6rem' : "0.75rem",
+      padding: isSmall ? '0.5rem' : isMobile ? '0.55rem' : "0.75rem",
       textAlign: "center",
-      fontSize: isMobile ? '1.15rem' : "1.5rem",
+      fontSize: isSmall ? '1.1rem' : isMobile ? '1.15rem' : "1.5rem",
       fontWeight: "bold",
       color: "#374151",
       boxSizing: 'border-box'
@@ -258,36 +267,37 @@ export default function DailyLogPage() {
       backgroundColor: '#bca987',
       color: 'white',
       fontWeight: 600,
-      padding: isMobile ? '0.9rem' : '1rem',
-      borderRadius: '0.75rem',
+      padding: isSmall ? '0.8rem' : isMobile ? '0.9rem' : '1rem',
+      borderRadius: isSmall ? '0.6rem' : '0.75rem',
       border: 'none',
       cursor: 'pointer',
       boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      transition: 'all 0.2s'
+      transition: 'all 0.2s',
+      fontSize: isSmall ? '0.9rem' : isMobile ? '0.95rem' : '1rem'
     },
     hr: {
-      margin: isMobile ? '1rem 0' : '1.5rem 0',
+      margin: isSmall ? '0.75rem 0' : isMobile ? '1rem 0' : '1.5rem 0',
       border: 'none',
       borderTop: '1px solid #e5e7eb'
     },
     datePickerRow: {
-      marginBottom: '1.5rem',
+      marginBottom: isMobile ? '1rem' : '1.5rem',
       display: 'flex',
       alignItems: 'center',
-      gap: isMobile ? 8 : 12,
+      gap: isSmall ? 6 : isMobile ? 8 : 12,
       flexWrap: 'wrap'
     },
     dateInput: {
       border: '1px solid #d1d5db',
-      borderRadius: '0.5rem',
-      padding: isMobile ? '0.45rem 0.6rem' : '0.5rem 0.75rem',
-      fontSize: isMobile ? '0.85rem' : '0.9rem',
+      borderRadius: isSmall ? '0.5rem' : '0.5rem',
+      padding: isSmall ? '0.4rem 0.55rem' : isMobile ? '0.45rem 0.6rem' : '0.5rem 0.75rem',
+      fontSize: isSmall ? '0.8rem' : isMobile ? '0.85rem' : '0.9rem',
       color: '#374151',
       background: '#fff',
       boxSizing: 'border-box'
     },
     logsArea: {
-      marginTop: isMobile ? 8 : 12,
+      marginTop: isSmall ? 6 : isMobile ? 8 : 12,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -295,66 +305,49 @@ export default function DailyLogPage() {
       position: 'relative',
       zIndex: 15,
       gap: isMobile ? 10 : 12,
-      paddingBottom: 20
+      paddingBottom: isMobile ? 16 : 20
     },
     viewNutritionBtn: {
-      padding: isMobile ? '8px 10px' : '8px 12px',
-      borderRadius: 10,
+      padding: isSmall ? '7px 9px' : isMobile ? '8px 10px' : '8px 12px',
+      borderRadius: isSmall ? 8 : 10,
       border: '1px solid #e5d8bf',
       background: '#fff7e8',
       color: '#4b4033',
-      fontWeight: 600
+      fontWeight: 600,
+      fontSize: isSmall ? '0.8rem' : isMobile ? '0.85rem' : '0.9rem',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+      boxSizing: 'border-box'
     },
     toast: {
       position: 'fixed',
-      bottom: 20,
+      bottom: isMobile ? 16 : 20,
       left: '50%',
       transform: 'translateX(-50%)',
       zIndex: 10001,
-      padding: '10px 14px',
-      borderRadius: 12,
+      padding: isSmall ? '8px 12px' : '10px 14px',
+      borderRadius: isSmall ? 10 : 12,
       background: '#1f2937',
       color: 'white',
       boxShadow: '0 10px 24px rgba(0,0,0,0.25)',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      fontSize: isSmall ? '0.85rem' : '0.9rem',
+      maxWidth: '90vw',
+      wordBreak: 'break-word'
     },
     dbRefreshCorner: {
       position: "fixed",
-      top: 12,
-      right: 12,
+      top: isSmall ? 8 : 12,
+      right: isSmall ? 8 : 12,
       zIndex: 9999,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      gap: 6,
-      fontSize: isMobile ? 22 : 26
-    },
-    stackedCard: {
-      position: 'absolute',
-      width: isMobile ? '94%' : '86%',
-      maxWidth: 820,
-      top: 0,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      borderRadius: 18,
-      pointerEvents: 'auto'
-    },
-    cardHalo: {
-      position: 'absolute',
-      inset: isMobile ? 'auto 4% -6% 4%' : 'auto 6% -8% 6%',
-      height: isMobile ? 160 : 220,
-      borderRadius: 24,
-      zIndex: -1,
-      pointerEvents: 'none',
-      filter: 'blur(36px)',
-      opacity: 0.65,
-      transition: 'opacity 180ms ease',
-      background: 'radial-gradient(60% 50% at 50% 40%, rgba(30,30,30,0.12) 0%, rgba(30,30,30,0.06) 20%, rgba(30,30,30,0.01) 60%, transparent 100%)',
-      transformOrigin: 'center'
+      gap: isSmall ? 4 : 6,
+      fontSize: isSmall ? 18 : isMobile ? 22 : 26
     }
-  }), [isMobile, isSmall, spacing.cardPadding, spacing.pagePadding]);
+  }), [isMobile, isSmall, spacing]);
 
-  /* ---------- helpers ---------- */
   const getCategoryIcon = (category) => {
     switch ((category || "").toLowerCase()) {
       case "meal": return <Utensils className="w-4 h-4" />;
@@ -374,7 +367,6 @@ export default function DailyLogPage() {
     setManualCalories("");
   };
 
-  // Centralized refresh (updates both logs + filteredLogs)
   const refreshLogs = useCallback(async () => {
     if (!user?.uid) return;
     const data = await getDailyLogs(user.uid);
@@ -384,7 +376,6 @@ export default function DailyLogPage() {
     setFilteredLogs(safe.filter((l) => l.date === chosen));
   }, [user, selectedDate]);
 
-  // Busy wrapper with minimum duration + optional post-refresh + toast
   async function withBusy(fn, { label = "Working…", min = 900, refresh = false, toastMessage } = {}) {
     const start = performance.now();
     setBusyLabel(label);
@@ -411,106 +402,93 @@ export default function DailyLogPage() {
     setTimeout(() => setToast(null), 2200);
   }
 
-  // Navigation with loader overlay
   const navigateWithLoader = useCallback((to, label = "Loading…") => {
     withBusy(async () => {
-      // small delay to let loader animate before route swap
       await new Promise((r) => setTimeout(r, 300));
       navigate(to);
     }, { label, min: 800 });
   }, [navigate]);
 
-  // Quick-Add + DnD
-  // --- quick-add built-ins (unchanged) ---
-// --- quick-add built-ins (unchanged except added grams) ---
-const QUICK_FOODS_BUILTIN = [
-  { name: "rice", emoji: "🍚", quantity: 1, grams: 200 },
-  { name: "chapati (1 pc)", emoji: "🫓", quantity: 1, grams: 60 },
-  { name: "dal (1 bowl)", emoji: "🍲", quantity: 1, grams: 250 },
-  { name: "paneer (100g)", emoji: "🧀", quantity: 1, grams: 100 },
-  { name: "chicken curry (150g)", emoji: "🍛", quantity: 1, grams: 150 },
-  { name: "eggs (2 pcs)", emoji: "🥚", quantity: 1, grams: 100 },
-  { name: "curd (100g)", emoji: "🥛", quantity: 1, grams: 100 },
-  { name: "salad (1 bowl)", emoji: "🥗", quantity: 1, grams: 150 },
-  { name: "apple", emoji: "🍎", quantity: 1, grams: 180 },
-  { name: "banana", emoji: "🍌", quantity: 1, grams: 120 },
-  { name: "chicken biryani (500g)", quantity: 1, grams: 750 }
-];
+  const QUICK_FOODS_BUILTIN = [
+    { name: "rice", emoji: "🍚", quantity: 1, grams: 200 },
+    { name: "chapati (1 pc)", emoji: "🫓", quantity: 1, grams: 60 },
+    { name: "dal (1 bowl)", emoji: "🍲", quantity: 1, grams: 250 },
+    { name: "paneer (100g)", emoji: "🧀", quantity: 1, grams: 100 },
+    { name: "chicken curry (150g)", emoji: "🍛", quantity: 1, grams: 150 },
+    { name: "eggs (2 pcs)", emoji: "🥚", quantity: 1, grams: 100 },
+    { name: "curd (100g)", emoji: "🥛", quantity: 1, grams: 100 },
+    { name: "salad (1 bowl)", emoji: "🥗", quantity: 1, grams: 150 },
+    { name: "apple", emoji: "🍎", quantity: 1, grams: 180 },
+    { name: "banana", emoji: "🍌", quantity: 1, grams: 120 },
+    { name: "chicken biryani (500g)", emoji: "🍛", quantity: 1, grams: 750 }
+  ];
 
+  const QUICK_CUSTOM_KEY = "dailylog_custom_quickfoods_v1";
 
-// --- localStorage key for custom presets ---
-// localStorage key for custom presets
-const QUICK_CUSTOM_KEY = "dailylog_custom_quickfoods_v1";
+  const [quickFoods, setQuickFoods] = useState(() => {
+    try {
+      const raw = localStorage.getItem(QUICK_CUSTOM_KEY);
+      const custom = raw ? JSON.parse(raw) : [];
+      const normalizedCustom = Array.isArray(custom)
+        ? custom.map((c) => ({ ...c, custom: true, grams: c.grams ?? 500 }))
+        : [];
+      return [...QUICK_FOODS_BUILTIN, ...normalizedCustom];
+    } catch (e) {
+      console.warn("Failed to load custom quick foods:", e);
+      return [...QUICK_FOODS_BUILTIN];
+    }
+  });
 
-// combined quick foods (builtin + custom from localStorage)
-const [quickFoods, setQuickFoods] = useState(() => {
-  try {
-    const raw = localStorage.getItem(QUICK_CUSTOM_KEY);
-    const custom = raw ? JSON.parse(raw) : [];
-    const normalizedCustom = Array.isArray(custom)
-      ? custom.map((c) => ({ ...c, custom: true, grams: c.grams ?? 500 }))
-      : [];
-    return [...QUICK_FOODS_BUILTIN, ...normalizedCustom];
-  } catch (e) {
-    console.warn("Failed to load custom quick foods:", e);
-    return [...QUICK_FOODS_BUILTIN];
+  const [showAddCustom, setShowAddCustom] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [customEmoji, setCustomEmoji] = useState("");
+  const [customQty, setCustomQty] = useState("1");
+  const [customGrams, setCustomGrams] = useState("500");
+
+  function persistCustomQuickFoods(allQuickFoods) {
+    try {
+      const custom = (allQuickFoods || []).filter((f) => f.custom).map(f => ({ ...f }));
+      localStorage.setItem(QUICK_CUSTOM_KEY, JSON.stringify(custom));
+    } catch (e) {
+      console.warn("persistCustomQuickFoods failed:", e);
+    }
   }
-});
 
-// UI state for the add custom form
-const [showAddCustom, setShowAddCustom] = useState(false);
-const [customName, setCustomName] = useState("");
-const [customEmoji, setCustomEmoji] = useState("");
-const [customQty, setCustomQty] = useState("1");
-const [customGrams, setCustomGrams] = useState("500"); // default to 500g
+  function handleAddCustomPreset() {
+    const nameTrimmed = (customName || "").trim();
+    const qtyNum = Number(customQty) || 1;
+    const gramsNum = Number(customGrams) || 500;
+    if (!nameTrimmed) return alert("Please enter a name for your custom food.");
+    if (!(qtyNum > 0)) return alert("Quantity must be > 0.");
+    if (!(gramsNum > 0)) return alert("Grams must be > 0.");
 
-// persist only custom items to localStorage
-function persistCustomQuickFoods(allQuickFoods) {
-  try {
-    const custom = (allQuickFoods || []).filter((f) => f.custom).map(f => ({ ...f }));
-    localStorage.setItem(QUICK_CUSTOM_KEY, JSON.stringify(custom));
-  } catch (e) {
-    console.warn("persistCustomQuickFoods failed:", e);
+    const newPreset = {
+      id: `custom-${Date.now()}`,
+      name: nameTrimmed,
+      emoji: customEmoji || "🍽️",
+      quantity: qtyNum,
+      grams: gramsNum,
+      custom: true
+    };
+
+    const next = [...quickFoods, newPreset];
+    setQuickFoods(next);
+    persistCustomQuickFoods(next);
+
+    setCustomName("");
+    setCustomEmoji("");
+    setCustomQty("1");
+    setCustomGrams("500");
+    setShowAddCustom(false);
   }
-}
 
-function handleAddCustomPreset() {
-  const nameTrimmed = (customName || "").trim();
-  const qtyNum = Number(customQty) || 1;
-  const gramsNum = Number(customGrams) || 500;
-  if (!nameTrimmed) return alert("Please enter a name for your custom food.");
-  if (!(qtyNum > 0)) return alert("Quantity must be > 0.");
-  if (!(gramsNum > 0)) return alert("Grams must be > 0.");
-
-  const newPreset = {
-    id: `custom-${Date.now()}`,
-    name: nameTrimmed,
-    emoji: customEmoji || "🍽️",
-    quantity: qtyNum,
-    grams: gramsNum,
-    custom: true
-  };
-
-  const next = [...quickFoods, newPreset];
-  setQuickFoods(next);
-  persistCustomQuickFoods(next);
-
-  // reset & close
-  setCustomName("");
-  setCustomEmoji("");
-  setCustomQty("1");
-  setCustomGrams("500");
-  setShowAddCustom(false);
-}
-
-function handleRemoveCustomPreset(preset) {
-  if (!preset?.custom) return;
-  if (!confirm(`Remove custom preset "${preset.name}"?`)) return;
-  const next = quickFoods.filter((f) => f !== preset);
-  setQuickFoods(next);
-  persistCustomQuickFoods(next);
-}
-
+  function handleRemoveCustomPreset(preset) {
+    if (!preset?.custom) return;
+    if (!confirm(`Remove custom preset "${preset.name}"?`)) return;
+    const next = quickFoods.filter((f) => f !== preset);
+    setQuickFoods(next);
+    persistCustomQuickFoods(next);
+  }
 
   async function quickAddFood(preset) {
     if (!user) throw new Error("Please log in first.");
@@ -532,6 +510,7 @@ function handleRemoveCustomPreset(preset) {
     e.dataTransfer.setData("text/plain", JSON.stringify(preset));
     e.dataTransfer.effectAllowed = "copy";
   }
+
   function handleDropOnZone(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -543,21 +522,15 @@ function handleRemoveCustomPreset(preset) {
           { label: "Adding meal…", refresh: true, toastMessage: "Meal logged 🍽️" }
         );
       }
-    } catch (_) {}
+    } catch (_) { }
   }
+
   function allowDrop(e) { e.preventDefault(); }
 
-  // Backend analyze
   async function analyzeItemsBackend(confirmedItems = []) {
     const ANALYZE_URL = "https://caloreat.onrender.com/api/run_nutrients";
-    if (!user?.uid) {
-      console.warn("analyzeItemsBackend: no logged-in user found");
-      return null;
-    }
-    if (!Array.isArray(confirmedItems) || confirmedItems.length === 0) {
-      console.warn("analyzeItemsBackend: no items provided");
-      return null;
-    }
+    if (!user?.uid) return null;
+    if (!Array.isArray(confirmedItems) || confirmedItems.length === 0) return null;
 
     try {
       const resp = await fetch(ANALYZE_URL, {
@@ -630,7 +603,6 @@ function handleRemoveCustomPreset(preset) {
     }
   }
 
-  /* ---------- Fetch logs on mount ---------- */
   useEffect(() => {
     if (!user) return;
     let mounted = true;
@@ -650,10 +622,8 @@ function handleRemoveCustomPreset(preset) {
     return () => (mounted = false);
   }, [user]);
 
-  // Auto-refresh when backend food DB updates
   useEffect(() => {
     if (!user) return;
-
     let prevVersion = null;
     let active = true;
 
@@ -674,7 +644,7 @@ function handleRemoveCustomPreset(preset) {
             setDbRefreshing(false);
           }, 1800);
         }
-      } catch (_) {}
+      } catch (_) { }
 
       setTimeout(check, 4000);
     };
@@ -683,14 +653,13 @@ function handleRemoveCustomPreset(preset) {
     return () => { active = false };
   }, [user, refreshLogs]);
 
-  /* ---------- Handlers ---------- */
   const handleAddLog = async () => {
     if (!user) throw new Error("Please log in first.");
     if (selectedCategory === "Meal" && !name.trim()) {
       throw new Error("Please enter a meal name.");
     }
 
-    setLoading(true); // button text only
+    setLoading(true);
     try {
       const basePayload = {
         item: name || (selectedCategory !== "Meal" ? selectedCategory : ""),
@@ -979,36 +948,52 @@ function handleRemoveCustomPreset(preset) {
     );
   };
 
-  /* ---------- Render UI ---------- */
   return (
     <>
-      {/* Global route-loader that uses your loader.jsx components */}
       <LoaderOverlay open={isBusy} label={busyLabel}>
         <FruitFlipLoader />
       </LoaderOverlay>
 
-      {/* inline glass & small helper styles that remain constant */}
       <style>{`
-        /* small global adjustments for form elements to behave consistently */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
+        
+        * {
+          box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+          input, textarea, select {
+            font-size: 16px !important;
+          }
+        }
       `}</style>
 
       <div style={styles.pageWrap}>
-        <StickerField count={18} stickers={["🥗","🍎","🥑","🍌","🍓","🍞","💪","🏃‍♀️","🥕","🥛","🍳","🍪","🍇"]} seed={1234} />
+        <StickerField count={isMobile ? 12 : 18} stickers={["🥗", "🍎", "🥑", "🍌", "🍓", "🍞", "💪", "🏃‍♀️", "🥕", "🥛", "🍳", "🍪", "🍇"]} seed={1234} />
 
-        {/* DB-refresh spinner (corner) */}
         {dbRefreshing && (
           <div style={styles.dbRefreshCorner}>
-            <motion.div style={{ fontSize: isMobile ? 26 : 32 }} animate={{ rotate: [0, 360] }} transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}>🍎</motion.div>
-            <motion.div style={{ fontSize: isMobile ? 20 : 26 }} animate={{ rotate: [0, -360] }} transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}>🥗</motion.div>
+            <motion.div
+              style={{ fontSize: isSmall ? 22 : isMobile ? 26 : 32 }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+            >
+              🍎
+            </motion.div>
+            <motion.div
+              style={{ fontSize: isSmall ? 16 : isMobile ? 20 : 26 }}
+              animate={{ rotate: [0, -360] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+            >
+              🥗
+            </motion.div>
           </div>
         )}
 
-        {/* Toast */}
         <AnimatePresence>
           {toast && (
             <motion.div
@@ -1020,7 +1005,7 @@ function handleRemoveCustomPreset(preset) {
               style={styles.toast}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 18 }}>{toast.icon ?? "✅"}</span>
+                <span style={{ fontSize: isSmall ? 16 : 18 }}>{toast.icon ?? "✅"}</span>
                 <span style={{ fontWeight: 600 }}>{toast.message}</span>
               </div>
             </motion.div>
@@ -1031,8 +1016,10 @@ function handleRemoveCustomPreset(preset) {
           <div style={styles.centerInner}>
 
             <div style={styles.headerRow}>
-              <div style={{ minWidth: 80 }}>
-                <button onClick={() => navigateWithLoader("/")} style={styles.btnFloatingBase}>← Back</button>
+              <div style={{ minWidth: isSmall ? 60 : 80 }}>
+                <button onClick={() => navigateWithLoader("/")} style={styles.homeBtn}>
+                  ← {!isSmall && "Home"}
+                </button>
               </div>
 
               <div style={styles.titleCenter}>
@@ -1040,9 +1027,9 @@ function handleRemoveCustomPreset(preset) {
                 <div style={styles.subtitle}>Quick log, analyze and view analytics</div>
               </div>
 
-              <div style={{ minWidth: 80, display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={() => navigateWithLoader("/app/activity", "Opening analytics…")} style={styles.btnFloatingBase}>
-                  View →
+              <div style={{ minWidth: isSmall ? 60 : 80, display: 'flex', justifyContent: 'flex-end' }}>
+                <button onClick={() => navigateWithLoader("/app/activity", "Opening analytics…")} style={styles.homeBtn}>
+                  {!isSmall && "View"} →
                 </button>
               </div>
             </div>
@@ -1052,21 +1039,34 @@ function handleRemoveCustomPreset(preset) {
                 <AISummaryDisplay summary={dailySummary.structured || dailySummary.summary || dailySummary} />
               )}
 
-              {/* Quick Add Grid */}
               <div style={styles.quickAddOuter}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: isMobile ? 16 : 18 }}>⚡</span>
-                    <h3 style={{ margin: 0, fontSize: isMobile ? 14 : 16, color: "#4b4033" }}>Quick Add Foods</h3>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: isSmall ? 8 : 10,
+                  flexWrap: 'wrap',
+                  gap: 8
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: isSmall ? 6 : 8 }}>
+                    <span style={{ fontSize: isSmall ? 14 : isMobile ? 16 : 18 }}>⚡</span>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: isSmall ? 13 : isMobile ? 14 : 16,
+                      color: "#4b4033",
+                      fontWeight: 600
+                    }}>
+                      Quick Add
+                    </h3>
                   </div>
                   <div
                     onDrop={handleDropOnZone}
                     onDragOver={allowDrop}
                     title="Drop a card here to add"
                     style={{
-                      fontSize: 12,
+                      fontSize: isSmall ? 10 : 12,
                       color: "#7a6a58",
-                      padding: "6px 10px",
+                      padding: isSmall ? "4px 8px" : "6px 10px",
                       border: "1px dashed #e5d8bf",
                       borderRadius: 999,
                       background: "#fffaf0",
@@ -1077,144 +1077,245 @@ function handleRemoveCustomPreset(preset) {
                   </div>
                 </div>
 
+                <div style={styles.quickFoodsGrid}>
+                  {quickFoods.map((f, idx) => (
+                    <div key={(f.id || f.name) + idx} style={{ position: 'relative' }}>
+                      <button
+                        draggable
+                        onDragStart={(e) => handlePresetDragStart(e, f)}
+                        onClick={() =>
+                          withBusy(() => quickAddFood(f), {
+                            label: "Adding meal…",
+                            refresh: true,
+                            toastMessage: "Meal logged 🍽️"
+                          })
+                        }
+                        style={styles.quickFoodBtn}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: isSmall ? 8 : 10 }}>
+                          <span style={{ fontSize: isSmall ? 16 : 20 }}>{f.emoji ?? "🍽️"}</span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{
+                              fontWeight: 700,
+                              fontSize: isSmall ? 12 : 13,
+                              color: "#3f3429",
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              gap: 6
+                            }}>
+                              <span style={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {f.name}
+                              </span>
+                              <span style={{
+                                fontSize: isSmall ? 10 : 12,
+                                color: '#8b7b67',
+                                fontWeight: 600,
+                                flexShrink: 0
+                              }}>
+                                {(f.grams ?? 500)}g
+                              </span>
+                            </div>
+                            <div style={{
+                              fontSize: isSmall ? 10 : 12,
+                              color: "#8b7b67",
+                              marginTop: 2
+                            }}>
+                              Tap · qty {f.quantity ?? 1}
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+
+                      {f.custom && (
+                        <button
+                          title="Remove custom preset"
+                          onClick={() => handleRemoveCustomPreset(f)}
+                          style={{
+                            position: 'absolute',
+                            top: 4,
+                            right: 4,
+                            border: 'none',
+                            background: 'rgba(0,0,0,0.06)',
+                            width: isSmall ? 22 : 26,
+                            height: isSmall ? 22 : 26,
+                            borderRadius: 6,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            fontSize: isSmall ? 10 : 12
+                          }}
+                        >
+                          ✖
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  <div>
+                    {!showAddCustom ? (
+                      <button
+                        onClick={() => setShowAddCustom(true)}
+                        style={{
+                          textAlign: 'center',
+                          border: '1px dashed #e5d8bf',
+                          borderRadius: isSmall ? 10 : 14,
+                          padding: isSmall ? 10 : isMobile ? 12 : 14,
+                          cursor: 'pointer',
+                          background: '#fffaf0',
+                          fontSize: isSmall ? 12 : 14,
+                          width: '100%'
+                        }}
+                      >
+                        ➕ Add custom
+                      </button>
+                    ) : (
+                      <div style={{
+                        border: '1px solid #f0e4c9',
+                        borderRadius: isSmall ? 10 : 12,
+                        padding: isSmall ? 6 : 8,
+                        background: '#fff'
+                      }}>
+                        <input
+                          placeholder="Name"
+                          value={customName}
+                          onChange={(e) => setCustomName(e.target.value)}
+                          style={{ width: '100%', marginBottom: 6, ...styles.smallInput }}
+                        />
+                        <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+                          <input
+                            placeholder="Emoji"
+                            value={customEmoji}
+                            onChange={(e) => setCustomEmoji(e.target.value)}
+                            style={{ width: isSmall ? 60 : 86, ...styles.smallInput }}
+                          />
+                          <input
+                            placeholder="Qty"
+                            value={customQty}
+                            onChange={(e) => setCustomQty(e.target.value)}
+                            style={{ flex: 1, ...styles.smallInput }}
+                          />
+                        </div>
+
+                        <div style={{ marginBottom: 6 }}>
+                          <label style={{
+                            fontSize: isSmall ? 10 : 12,
+                            color: '#666',
+                            display: 'block',
+                            marginBottom: 4
+                          }}>
+                            Grams (per serving)
+                          </label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={customGrams}
+                            onChange={(e) => setCustomGrams(e.target.value)}
+                            style={{ width: '100%', ...styles.smallInput }}
+                          />
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                          <button
+                            onClick={handleAddCustomPreset}
+                            style={{
+                              flex: 1,
+                              padding: isSmall ? 6 : 8,
+                              borderRadius: 8,
+                              border: 'none',
+                              background: '#bca987',
+                              color: '#fff',
+                              fontSize: isSmall ? 12 : 14,
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setShowAddCustom(false)}
+                            style={{
+                              padding: isSmall ? 6 : 8,
+                              borderRadius: 8,
+                              border: '1px solid #e5d8bf',
+                              background: '#fff',
+                              fontSize: isSmall ? 12 : 14,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+              {!isSmall && (
                 <div
-  style={{
-    display: 'grid',
-    gap: 10,
-    gridTemplateColumns: isMobile ? 'repeat(1, 1fr)' : 'repeat(auto-fit, minmax(140px, 1fr))',
-  }}
->
-  {quickFoods.map((f, idx) => (
-    <div key={(f.id || f.name) + idx} style={{ position: 'relative' }}>
-      <button
-        draggable
-        onDragStart={(e) => handlePresetDragStart(e, f)}
-        onClick={() =>
-          withBusy(() => quickAddFood(f), { label: "Adding meal…", refresh: true, toastMessage: "Meal logged 🍽️" })
-        }
-        style={{
-          textAlign: 'left',
-          border: '1px solid #f0e4c9',
-          borderRadius: 14,
-          padding: isMobile ? 10 : 12,
-          cursor: 'pointer',
-          background: '#ffffff',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.05)',
-          transition: 'transform 160ms ease, box-shadow 160ms ease',
-          width: '100%',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: isSmall ? 18 : 20 }}>{f.emoji ?? "🍽️"}</span>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: isMobile ? 13 : 13, color: "#3f3429", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>{f.name}</span>
-              <span style={{ fontSize: 12, color: '#8b7b67', fontWeight: 600 }}>{(f.grams ?? 500)}g</span>
-            </div>
-            <div style={{ fontSize: isMobile ? 11 : 12, color: "#8b7b67" }}>Tap or drag to add · qty {f.quantity ?? 1}</div>
-          </div>
-        </div>
-      </button>
+                  onDrop={handleDropOnZone}
+                  onDragOver={allowDrop}
+                  style={styles.dropZoneWide}
+                >
+                  Drop quick food here to log instantly
+                </div>
+              )}
 
-      {/* delete control for custom items */}
-      {f.custom && (
-        <button
-          title="Remove custom preset"
-          onClick={() => handleRemoveCustomPreset(f)}
-          style={{
-            position: 'absolute',
-            top: 6,
-            right: 6,
-            border: 'none',
-            background: 'rgba(0,0,0,0.06)',
-            width: 26,
-            height: 26,
-            borderRadius: 8,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-        >
-          ✖
-        </button>
-      )}
-    </div>
-  ))}
-
-  {/* Add custom control (last tile) */}
-  <div>
-    {!showAddCustom ? (
-      <button
-        onClick={() => setShowAddCustom(true)}
-        style={{
-          textAlign: 'center',
-          border: '1px dashed #e5d8bf',
-          borderRadius: 14,
-          padding: isMobile ? 12 : 14,
-          cursor: 'pointer',
-          background: '#fffaf0',
-        }}
-      >
-        ➕ Add custom
-      </button>
-    ) : (
-      <div style={{ border: '1px solid #f0e4c9', borderRadius: 12, padding: 8, background: '#fff' }}>
-        <input placeholder="Name" value={customName} onChange={(e) => setCustomName(e.target.value)}
-          style={{ width: '100%', marginBottom: 6, ...styles.smallInput }} />
-        <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
-          <input placeholder="Emoji (optional)" value={customEmoji} onChange={(e) => setCustomEmoji(e.target.value)}
-            style={{ width: 86, ...styles.smallInput }} />
-          <input placeholder="Qty" value={customQty} onChange={(e) => setCustomQty(e.target.value)}
-            style={{ flex: 1, ...styles.smallInput }} />
-        </div>
-
-        <div style={{ marginBottom: 6 }}>
-          <label style={{ fontSize: 12, color: '#666', display: 'block', marginBottom: 4 }}>Grams (per serving)</label>
-          <input type="number" min="1" value={customGrams} onChange={(e) => setCustomGrams(e.target.value)}
-            style={{ width: '100%', ...styles.smallInput }} />
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <button onClick={handleAddCustomPreset} style={{ flex: 1, padding: 8, borderRadius: 8, border: 'none', background: '#bca987', color: '#fff' }}>
-            Save
-          </button>
-          <button onClick={() => setShowAddCustom(false)} style={{ padding: 8, borderRadius: 8, border: '1px solid #e5d8bf', background: '#fff' }}>
-            Cancel
-          </button>
-        </div>
-      </div>
-    )}
-  </div>
-</div>
-
-              </div>
-
-              {/* Wide drop zone */}
-              <div
-                onDrop={handleDropOnZone}
-                onDragOver={allowDrop}
-                style={{ ...styles.dropZoneWide, maxWidth: isMobile ? '100%' : 720 }}
-              >
-                Drop quick food here to log instantly
-              </div>
-
-              {/* Category + inputs */}
-              <div style={{ marginBottom: isMobile ? 12 : '1.5rem' }}>
-                <label style={{ display:'block', fontSize:isMobile ? '0.825rem' : '0.875rem', fontWeight:'500', color:'#6b7280', marginBottom:isMobile ? '0.6rem' : '1rem' }}>Category</label>
+              <div style={{ marginBottom: isSmall ? 10 : isMobile ? 12 : '1.5rem' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: isSmall ? '0.75rem' : isMobile ? '0.825rem' : '0.875rem',
+                  fontWeight: '500',
+                  color: '#6b7280',
+                  marginBottom: isSmall ? '0.5rem' : isMobile ? '0.6rem' : '1rem'
+                }}>
+                  Category
+                </label>
 
                 <div style={styles.categoryGrid}>
                   {categories.map((cat) => {
                     const Icon = cat.icon;
                     const isSelected = selectedCategory === cat.name;
                     return (
-                      <button key={cat.name} onClick={() => { setSelectedCategory(cat.name); setManualCalories(""); }} className="category-btn"
-                        style={styles.categoryBtn(isSelected, cat)}>
-                        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'0.5rem' }}>
-                          <div style={{ padding:isMobile ? '0.5rem' : '0.75rem', borderRadius:'0.75rem', backgroundColor: isSelected ? 'rgba(255,255,255,0.5)' : '#fff' }}>
-                            <Icon style={{ width:isMobile ? '1.2rem' : '1.5rem', height:isMobile ? '1.2rem' : '1.5rem', color: isSelected ? cat.textColor : '#6b7280' }} />
+                      <button
+                        key={cat.name}
+                        onClick={() => {
+                          setSelectedCategory(cat.name);
+                          setManualCalories("");
+                        }}
+                        style={styles.categoryBtn(isSelected, cat)}
+                      >
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: isSmall ? '0.35rem' : '0.5rem'
+                        }}>
+                          <div style={{
+                            padding: isSmall ? '0.4rem' : isMobile ? '0.5rem' : '0.75rem',
+                            borderRadius: '0.75rem',
+                            backgroundColor: isSelected ? 'rgba(255,255,255,0.5)' : '#fff'
+                          }}>
+                            <Icon style={{
+                              width: isSmall ? '1rem' : isMobile ? '1.2rem' : '1.5rem',
+                              height: isSmall ? '1rem' : isMobile ? '1.2rem' : '1.5rem',
+                              color: isSelected ? cat.textColor : '#6b7280'
+                            }} />
                           </div>
-                          <span style={{ fontWeight:600, fontSize:isMobile ? '0.82rem' : '0.875rem', color: isSelected ? cat.textColor : '#374151' }}>{cat.name}</span>
+                          <span style={{
+                            fontWeight: 600,
+                            fontSize: isSmall ? '0.75rem' : isMobile ? '0.82rem' : '0.875rem',
+                            color: isSelected ? cat.textColor : '#374151'
+                          }}>
+                            {cat.name}
+                          </span>
                         </div>
                       </button>
                     );
@@ -1224,28 +1325,77 @@ function handleRemoveCustomPreset(preset) {
 
               <div style={styles.formGridOne}>
                 {selectedCategory === "Meal" && (
-                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12 }}>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                    gap: isSmall ? 10 : 12
+                  }}>
                     <div>
-                      <label style={{ display:'block', fontSize:isMobile ? '0.825rem' : '0.875rem', fontWeight:'500', color:'#6b7280', marginBottom:'0.5rem' }}>Meal Name</label>
-                      <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder="e.g., Chicken Biryani"
-                        style={styles.inputBase} />
+                      <label style={{
+                        display: 'block',
+                        fontSize: isSmall ? '0.75rem' : isMobile ? '0.825rem' : '0.875rem',
+                        fontWeight: '500',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem'
+                      }}>
+                        Meal Name
+                      </label>
+                      <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        type="text"
+                        placeholder="e.g., Chicken Biryani"
+                        style={styles.inputBase}
+                      />
                     </div>
 
                     <div>
-                      <label style={{ display:'block', fontSize:isMobile ? '0.825rem' : '0.875rem', fontWeight:'500', color:'#6b7280', marginBottom:'0.5rem' }}>Calories (optional)</label>
-                      <input type="number" min="0" value={manualCalories} onChange={(e) => setManualCalories(e.target.value)} placeholder="e.g., 420"
-                        style={styles.smallInput} />
-                      <div style={{ fontSize:'0.75rem', color:'#9ca3af', marginTop:'0.25rem' }}>If you know calories, enter them — the analyzer will use this value as an override.</div>
+                      <label style={{
+                        display: 'block',
+                        fontSize: isSmall ? '0.75rem' : isMobile ? '0.825rem' : '0.875rem',
+                        fontWeight: '500',
+                        color: '#6b7280',
+                        marginBottom: '0.5rem'
+                      }}>
+                        Calories (optional)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={manualCalories}
+                        onChange={(e) => setManualCalories(e.target.value)}
+                        placeholder="e.g., 420"
+                        style={styles.smallInput}
+                      />
+                      <div style={{
+                        fontSize: isSmall ? '0.65rem' : '0.75rem',
+                        color: '#9ca3af',
+                        marginTop: '0.25rem',
+                        lineHeight: 1.3
+                      }}>
+                        If known, enter calories—analyzer will use this as override
+                      </div>
                     </div>
                   </div>
                 )}
 
                 <div>
-                  <label style={{ display:'block', fontSize:isMobile ? '0.825rem' : '0.875rem', fontWeight:'500', color:'#6b7280', marginBottom:'0.5rem' }}>
+                  <label style={{
+                    display: 'block',
+                    fontSize: isSmall ? '0.75rem' : isMobile ? '0.825rem' : '0.875rem',
+                    fontWeight: '500',
+                    color: '#6b7280',
+                    marginBottom: '0.5rem'
+                  }}>
                     {selectedCategory === "Meal" ? "Servings" : selectedCategory === "Water" ? "Glasses (250ml)" : selectedCategory === "Activity" ? "Minutes / Steps" : "Hours"}
                   </label>
                   <div style={styles.qtyControls}>
-                    <button onClick={() => setQuantity(Math.max(1, parseFloat(quantity || "1") - 1).toString())} style={styles.qtyBtn}>-</button>
+                    <button
+                      onClick={() => setQuantity(Math.max(1, parseFloat(quantity || "1") - 1).toString())}
+                      style={styles.qtyBtn}
+                    >
+                      -
+                    </button>
                     <input
                       type="number"
                       step="0.1"
@@ -1266,7 +1416,12 @@ function handleRemoveCustomPreset(preset) {
                       }}
                       style={styles.qtyInput}
                     />
-                    <button onClick={() => setQuantity((Math.max(1, parseFloat(quantity || "1")) + 1).toString())} style={styles.qtyBtn}>+</button>
+                    <button
+                      onClick={() => setQuantity((Math.max(1, parseFloat(quantity || "1")) + 1).toString())}
+                      style={styles.qtyBtn}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
 
@@ -1275,7 +1430,12 @@ function handleRemoveCustomPreset(preset) {
                     onClick={() =>
                       withBusy(
                         () => handleAddLog(),
-                        { label: `Logging ${selectedCategory.toLowerCase()}…`, min: 900, refresh: true, toastMessage: `${selectedCategory} logged ${selectedCategory === "Meal" ? "🍽️" : "✅"}` }
+                        {
+                          label: `Logging ${selectedCategory.toLowerCase()}…`,
+                          min: 900,
+                          refresh: true,
+                          toastMessage: `${selectedCategory} logged ${selectedCategory === "Meal" ? "🍽️" : "✅"}`
+                        }
                       )
                     }
                     disabled={isBusy}
@@ -1285,22 +1445,31 @@ function handleRemoveCustomPreset(preset) {
                       cursor: isBusy ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    <div style={{ display:'flex', gap:'0.625rem', alignItems:'center', justifyContent:'center' }}>
-                      <Plus style={{ width:isMobile ? '1rem' : '1.25rem', height:isMobile ? '1rem' : '1.25rem' }} />
-                      <span>{isBusy ? "Saving..." : (loading ? "Adding..." : `Add ${selectedCategory}`)}</span>
+                    <div style={{
+                      display: 'flex',
+                      gap: '0.5rem',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Plus style={{
+                        width: isSmall ? '0.9rem' : isMobile ? '1rem' : '1.25rem',
+                        height: isSmall ? '0.9rem' : isMobile ? '1rem' : '1.25rem'
+                      }} />
+                      <span>
+                        {isBusy ? "Saving..." : (loading ? "Adding..." : `Add ${selectedCategory}`)}
+                      </span>
                     </div>
                   </button>
                 </div>
 
                 <hr style={styles.hr} />
 
-                {/* Uncomment if you want quick analyze/summarize controls visible on mobile */}
                 {/* <div style={{ marginBottom: '1.5rem', display: 'grid', gap: 8 }}>
-                  <button onClick={handleAnalyzeToday} disabled={analyzing || isBusy} style={{ width:'100%', backgroundColor:'#bddfa3', color:'#3f5c2c', fontWeight:'600', padding:'0.875rem', borderRadius:'0.75rem', border:'none', cursor: (analyzing || isBusy) ? 'not-allowed' : 'pointer', boxShadow:'0 4px 12px rgba(0,0,0,0.08)', transition:'all 0.2s', opacity: (analyzing || isBusy) ? 0.7 : 1 }}>
+                  <button onClick={handleAnalyzeToday} disabled={analyzing || isBusy} style={{ width: '100%', backgroundColor: '#bddfa3', color: '#3f5c2c', fontWeight: '600', padding: '0.875rem', borderRadius: '0.75rem', border: 'none', cursor: (analyzing || isBusy) ? 'not-allowed' : 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', transition: 'all 0.2s', opacity: (analyzing || isBusy) ? 0.7 : 1 }}>
                     {analyzing ? "Analyzing..." : "Run Analysis for Today's Meals"}
                   </button>
 
-                  <button onClick={handleSummarizeToday} disabled={analyzing || isBusy} style={{ width:'100%', backgroundColor:'#f7e7b9', color:'#6b4b00', fontWeight:'600', padding:'0.75rem', borderRadius:'0.75rem', border:'none', cursor: (analyzing || isBusy) ? 'not-allowed' : 'pointer' }}>
+                  <button onClick={handleSummarizeToday} disabled={analyzing || isBusy} style={{ width: '100%', backgroundColor: '#f7e7b9', color: '#6b4b00', fontWeight: '600', padding: '0.75rem', borderRadius: '0.75rem', border: 'none', cursor: (analyzing || isBusy) ? 'not-allowed' : 'pointer' }}>
                     {analyzing ? "Generating summary..." : "Generate Daily AI Summary"}
                   </button>
                 </div> */}
@@ -1308,13 +1477,14 @@ function handleRemoveCustomPreset(preset) {
                 <div style={{ marginTop: '1rem' }}>
                   {/* placeholder for additional actions */}
                 </div>
+                <hr style={styles.hr} />
               </div>
             </div>
 
             <div style={{
-              height: isMobile ? 36 : 48,
-              marginTop: 12,
-              marginBottom: 8,
+              height: isSmall ? 24 : isMobile ? 36 : 48,
+              marginTop: isSmall ? 8 : 12,
+              marginBottom: isSmall ? 6 : 8,
               background: "linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0))",
               borderRadius: 12,
               width: "100%",
@@ -1325,14 +1495,25 @@ function handleRemoveCustomPreset(preset) {
               opacity: 0.9
             }} />
 
-            {/* Logs by Date */}
             <div style={styles.logsArea}>
-              <h3 style={{ fontSize: isMobile ? '1rem' : '1.125rem', fontWeight: 600, color: '#5c4f3f', marginBottom: isMobile ? 8 : '1rem' }}>
+              <h3 style={{
+                fontSize: isSmall ? '0.95rem' : isMobile ? '1rem' : '1.125rem',
+                fontWeight: 600,
+                color: '#5c4f3f',
+                marginBottom: isSmall ? 6 : isMobile ? 8 : '1rem',
+                textAlign: 'center'
+              }}>
                 Logs by Date
               </h3>
 
               <div style={styles.datePickerRow}>
-                <label style={{ color: "#4b4033", fontWeight: 500 }}>Select Date:</label>
+                <label style={{
+                  color: "#4b4033",
+                  fontWeight: 500,
+                  fontSize: isSmall ? '0.8rem' : isMobile ? '0.85rem' : '0.9rem'
+                }}>
+                  Select Date:
+                </label>
                 <input
                   type="date"
                   value={selectedDate || new Date().toISOString().split("T")[0]}
@@ -1346,9 +1527,20 @@ function handleRemoveCustomPreset(preset) {
               </div>
 
               {filteredLogs?.length === 0 ? (
-                <p style={{ color: "#6b7280" }}>No logs for this date.</p>
+                <p style={{
+                  color: "#6b7280",
+                  textAlign: 'center',
+                  padding: '2rem 1rem',
+                  fontSize: isSmall ? '0.85rem' : '0.9rem'
+                }}>
+                  No logs for this date.
+                </p>
               ) : (
-                <div style={{ width: '100%', boxSizing: 'border-box', padding: isMobile ? '0 6px' : undefined }}>
+                <div style={{
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  padding: isSmall ? '0 2px' : isMobile ? '0 6px' : undefined
+                }}>
                   <CardStackPage
                     logs={filteredLogs}
                     onEdit={handleEdit}
@@ -1358,7 +1550,13 @@ function handleRemoveCustomPreset(preset) {
                 </div>
               )}
 
-              <div style={{ marginTop: 8, textAlign: "center" }}>
+              <div style={{
+                marginTop: isSmall ? 12 : 16,
+                textAlign: "center",
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: isSmall ? '0 8px' : undefined
+              }}>
                 <button
                   onClick={() => navigateWithLoader(`/app/nutrition?date=${encodeURIComponent(selectedDate)}`, "Opening nutrition…")}
                   style={styles.viewNutritionBtn}
