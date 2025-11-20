@@ -20,7 +20,7 @@
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--no-webstorage react-scripts start",
-    "build": "cross-env NODE_OPTIONS=--no-webstorage react-scripts build",
+    "build": "cross-env GENERATE_SOURCEMAP=false NODE_OPTIONS=\"--max-old-space-size=4096 --no-webstorage\" react-scripts build",
     "build:css": "tailwindcss -i ./src/index.css -o ./src/tailwind.output.css --minify",
     "postinstall": "echo 'postinstall hook - tailwind binary should be available'"
   },
